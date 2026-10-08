@@ -262,3 +262,23 @@ The project aims to contribute to quality education by providing students with:
       │  Local AI  │   │ Backend      │
       │ qwen2.5:3b │   │ server.py    │
       └────────────┘   └──────────────┘
+
+
+---
+
+## 📸 Project Screenshots
+
+### 🤖 AI Agents
+![AI Agents](screenshots/ai-agents.png)
+
+### 🧑‍🏫 AI Mentor
+![AI Mentor](screenshots/ai-mentor.png)
+
+### 📰 AI Updates
+![AI Updates](screenshots/ai-updates.png)
+
+### 💼 Career Coach
+![Career Coach](screenshots/career-coach.png)
+
+### 💻 Coding Lab
+![Coding Lab](screenshots/coding-lab.png)
