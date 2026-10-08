@@ -1,0 +1,879 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SkillPilot AI — Personal Learning Mentor</title>
+<style>
+:root{--bg:#070b15;--panel:#101728;--panel2:#141c30;--line:#25304a;--text:#f4f6fb;--muted:#98a5bd;--gold:#d8b879;--violet:#8d72ff;--cyan:#55d6ff;--danger:#ff7180;--ok:#5ee0a0}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 75% 0,#222a5a55,transparent 35%),radial-gradient(circle at 10% 20%,#0c526333,transparent 30%),var(--bg);color:var(--text);font:15px Inter,Segoe UI,Arial,sans-serif;min-height:100vh}
+button,input,select,textarea{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+#login{min-height:100vh;display:grid;place-items:center;padding:25px}.auth{width:min(1080px,96vw);display:grid;grid-template-columns:1.1fr .9fr;gap:18px}.auth>div{background:#11182af0;border:1px solid var(--line);border-radius:28px;padding:42px;box-shadow:0 30px 90px #0007}
+.brandmark{width:58px;height:58px;border-radius:18px;background:linear-gradient(135deg,var(--gold),#a486e8);display:grid;place-items:center;color:#151321;font-weight:900;font-size:20px;box-shadow:0 0 35px #d8b87922}
+h1,h2,h3{margin-top:0}.auth h1{font-size:58px;line-height:1.02;margin:40px 0 15px}.gold{color:var(--gold)}.muted{color:var(--muted)}.field{margin:14px 0}.field label{display:block;color:#aeb9cc;font-size:13px;margin-bottom:7px}.field input,.field select,.field textarea{width:100%;background:#070c18;border:1px solid var(--line);color:var(--text);padding:13px 14px;border-radius:12px;outline:none}.field input:focus,.field select:focus,.field textarea:focus{border-color:#8d72ff88}
+.tabs{display:grid;grid-template-columns:1fr 1fr;margin-bottom:18px}.tabs button{padding:12px;background:#0b1020;border:1px solid var(--line);color:#9eabc1}.tabs button.active{background:#191d30;color:#fff;border-color:#d8b87966}.btn{border:1px solid #d8b87922;background:linear-gradient(135deg,var(--gold),#b18bf2);color:#141322;font-weight:800;padding:12px 16px;border-radius:11px}.btn.secondary{background:#151c2e;color:#e4e8f0;border-color:var(--line)}.btn.danger{background:#351b25;color:#ffb4be}.error{color:#ff9da8;font-size:13px;min-height:20px}
+#app{min-height:100vh}.sidebar{position:fixed;left:0;top:0;bottom:0;width:270px;background:#080d18ee;border-right:1px solid #ffffff0b;padding:18px 16px;z-index:5}.brand{display:flex;gap:12px;align-items:center;padding:3px 6px 22px}.brand .brandmark{width:48px;height:48px;border-radius:15px}.brand b{font-size:19px}.brand small{display:block;color:var(--muted);margin-top:3px}.nav{display:grid;gap:6px}.nav button{border:1px solid transparent;background:transparent;color:#9daac0;text-align:left;padding:13px 15px;border-radius:11px;font-weight:600}.nav button:hover,.nav button.active{background:#151b2d;border-color:#d8b87933;color:#fff}.streak-card{margin-top:18px;border:1px solid #ffffff10;background:linear-gradient(135deg,#17192b,#101525);padding:17px;border-radius:18px}.streak-card strong{font-size:24px;color:var(--gold)}
+.main{margin-left:270px;padding:18px 34px 70px;max-width:1600px}.topbar{display:flex;justify-content:flex-end;gap:9px;align-items:center;min-height:50px}.pill{border:1px solid var(--line);background:#0d1424;padding:10px 13px;border-radius:999px;color:#bac4d5}.pill b{color:#fff}.avatar{width:42px;height:42px;border-radius:50%;background:linear-gradient(135deg,#f0d18d,#8d72ff);color:#171321;display:grid;place-items:center;font-weight:900;cursor:pointer}
+.page{display:none}.page.active{display:block}.hero{margin-top:12px;padding:30px;border:1px solid var(--line);border-radius:23px;background:linear-gradient(135deg,#152544,#17152e);overflow:hidden;position:relative}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;background:#8d72ff15;right:-90px;top:-100px;filter:blur(5px)}.kicker{letter-spacing:2px;color:var(--gold);font-size:12px;font-weight:800}.hero h1{font-size:48px;margin:12px 0}.hero p{color:#aab6ca;font-size:16px;max-width:750px}.grid{display:grid;gap:15px}.grid.four{grid-template-columns:repeat(4,1fr)}.grid.two{grid-template-columns:1fr 1fr}.card{background:#101728e8;border:1px solid var(--line);border-radius:18px;padding:20px}.stat b{font-size:30px}.bar{height:8px;background:#202b42;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--violet));border-radius:99px}
+.select{background:#090f1c;color:#fff;border:1px solid var(--line);padding:11px;border-radius:10px}.mini,.step,.update,.agent-item,.submission-item{border:1px solid #ffffff0d;background:#ffffff03;border-radius:13px;padding:13px}.road{display:grid;gap:9px}.step{display:flex;gap:12px}.num{width:30px;height:30px;border-radius:9px;background:#1e2941;display:grid;place-items:center;color:#d8c18c;font-weight:800}.challenge{background:#0b101d;border:1px solid #ffffff0d;padding:16px;border-radius:14px;margin:14px 0}.challenge b{color:var(--gold)}.checklist{display:grid;gap:9px}.checkrow{color:#b6c0d0}.checkrow input{accent-color:var(--violet);margin-right:8px}.code-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.code-editor{width:100%;min-height:390px;resize:vertical;background:#050913;border:1px solid #27324a;color:#e7ecf4;border-radius:14px;padding:16px;font-family:Consolas,monospace;font-size:14px;line-height:1.55}.code-output{white-space:pre-wrap;background:#050913;border:1px solid #27324a;border-radius:12px;padding:14px;min-height:100px;color:#cdd7e7;font-family:Consolas,monospace}.tag{display:inline-block;padding:5px 8px;border-radius:99px;background:#d8b87912;border:1px solid #d8b87922;color:#d9c79e;font-size:11px;margin-right:5px}
+.quiz-options{display:grid;gap:10px}.quiz-opt{padding:14px;text-align:left;border:1px solid var(--line);border-radius:12px;background:#151d31;color:#dce3ef}.quiz-opt.selected{border-color:var(--gold);background:#332b1a}.quiz-result{padding:14px;border-radius:12px;background:#0d1422;margin-top:14px}.quiz-nav{display:flex;justify-content:space-between;gap:8px;margin-top:15px}.score{font-size:36px;color:var(--gold);font-weight:900}
+.agent-layout{display:grid;grid-template-columns:300px 1fr;gap:15px}.agent-list{display:grid;gap:8px}.agent-item{display:flex;gap:10px;text-align:left;color:#c1cbd9}.agent-item.active{border-color:#d8b87966;background:#1b1c30}.agent-icon{width:38px;height:38px;border-radius:11px;background:linear-gradient(135deg,#e1c68f,#9479d8);color:#171321;display:grid;place-items:center;font-weight:900;flex:none}.agent-item small{display:block;color:#78869d;margin-top:3px}.chat{height:500px;overflow:auto;padding:10px}.msg{max-width:80%;padding:13px 15px;background:#171f33;border:1px solid #ffffff0b;border-radius:15px;margin:8px 0}.msg.user{margin-left:auto;background:#1b2038}.msg .who{font-size:11px;color:var(--gold);font-weight:800;margin-bottom:5px}.compose{display:flex;gap:8px;border-top:1px solid #ffffff0b;padding-top:12px}.compose input{flex:1;background:#050913;border:1px solid var(--line);color:#fff;border-radius:11px;padding:13px}.mic{width:45px;background:#151d31;border:1px solid var(--line);color:#fff;border-radius:11px}.mic.on{border-color:var(--gold);box-shadow:0 0 25px #d8b87933}
+.market-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.market-card{padding:17px;border:1px solid var(--line);border-radius:15px;background:#101728}.market-card .big{font-size:23px;font-weight:900;color:var(--gold)}.skill-chip{display:inline-block;margin:4px 4px 0 0;padding:5px 8px;border-radius:99px;background:#8d72ff12;border:1px solid #8d72ff2a;color:#cfc7e9;font-size:11px}
+.progress-ring{width:120px;height:120px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold) 0 0%,#202a40 0);position:relative;flex:none}.progress-ring:after{content:"";position:absolute;inset:10px;border-radius:50%;background:#101728}.progress-ring span{position:relative;z-index:1;font-size:26px;font-weight:900}.learning-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:15px;margin-top:15px}.submission-list{display:grid;gap:8px;max-height:430px;overflow:auto}.submission-item{cursor:pointer}.submission-item:hover{border-color:#d8b87944}
+.modal{position:fixed;inset:0;background:#02040bbb;backdrop-filter:blur(7px);display:none;place-items:center;z-index:20}.modal.show{display:grid}.modalbox{width:min(590px,94vw);background:#11182a;border:1px solid var(--line);border-radius:22px;padding:25px;box-shadow:0 40px 100px #0009}.modalhead{display:flex;justify-content:space-between;align-items:center}
+.toast{position:fixed;right:22px;bottom:22px;background:#161f33;border:1px solid #d8b87955;color:#fff;padding:13px 16px;border-radius:12px;display:none;z-index:50}
+@media(max-width:1000px){.sidebar{width:210px}.main{margin-left:210px;padding:15px}.grid.four{grid-template-columns:1fr 1fr}.agent-layout,.learning-grid{grid-template-columns:1fr}.auth{grid-template-columns:1fr}.auth>div:first-child{display:none}.market-grid{grid-template-columns:1fr}}
+@media(max-width:700px){.sidebar{position:relative;width:100%;height:auto}.main{margin-left:0}.nav{grid-template-columns:1fr 1fr}.grid.four,.grid.two{grid-template-columns:1fr}.hero h1{font-size:36px}.topbar{justify-content:flex-start;flex-wrap:wrap}}
+
+/* Personal AI premium motion */
+.agent-item,.msg,.card{transition:transform .22s ease,border-color .22s ease,box-shadow .22s ease}
+.agent-item:hover{transform:translateY(-2px);box-shadow:0 10px 30px #00000022}
+#agentChat{background:radial-gradient(circle at 80% 10%,#8e72e815,transparent 30%),radial-gradient(circle at 10% 90%,#d8b8790c,transparent 28%)}
+.personal-glow{position:relative;overflow:hidden}
+.personal-glow:before{content:"";position:absolute;inset:-40%;background:radial-gradient(circle,#a684ff12,transparent 45%);animation:mentorGlow 7s ease-in-out infinite;pointer-events:none}
+@keyframes mentorGlow{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(5%,3%) scale(1.08)}}
+.typing{display:inline-flex;gap:4px;align-items:center;color:#aebbd7}.typing i{width:5px;height:5px;border-radius:50%;background:#d8b879;animation:typingDot 1.2s infinite}.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes typingDot{0%,60%,100%{opacity:.25;transform:translateY(0)}30%{opacity:1;transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+
+<div id="login">
+ <div class="auth">
+  <div>
+   <div class="brandmark">SP</div>
+   <h1>One account.<br><span class="gold">Every learning path.</span></h1>
+   <p class="muted" style="font-size:17px;line-height:1.7">SkillPilot connects your subject, coding practice, quizzes, career plan and separate AI mentors to the same account.</p>
+   <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:25px"><span class="pill">Personal Mentor</span><span class="pill">Subject Agents</span><span class="pill">Coding Lab</span><span class="pill">Career Coach</span></div>
+  </div>
+  <div>
+   <div class="tabs"><button id="loginTab" class="active" onclick="setAuthMode('login')">Sign in</button><button id="signupTab" onclick="setAuthMode('signup')">Create account</button></div>
+   <h2 id="authTitle">Welcome back</h2><p class="muted" id="authSub">Sign in to open your saved AI workspace.</p>
+   <div class="field signup-only hidden"><label>Full name</label><input id="authName" placeholder="Your name"></div>
+   <div class="field"><label>User ID</label><input id="authUser" placeholder="karthik"></div>
+   <div class="field"><label>Password</label><input id="authPass" type="password" placeholder="Password"></div>
+   <div class="error" id="authError"></div>
+   <button class="btn" style="width:100%" id="authButton" onclick="submitAuth()">Sign in to SkillPilot</button>
+   <p class="muted" style="font-size:12px;margin-top:17px">Local prototype accounts are saved in this browser. Use the same User ID and password to return to the same account.</p>
+  </div>
+ </div>
+</div>
+
+<div id="app" class="hidden">
+ <aside class="sidebar">
+  <div class="brand"><div class="brandmark">SP</div><div><b>SkillPilot AI</b><small>Learning Mentor</small></div></div>
+  <div class="nav">
+   <button data-page="dashboard" onclick="show('dashboard')">Dashboard</button>
+   <button data-page="learning" onclick="show('learning')">My Learning</button>
+   <button data-page="quiz" onclick="show('quiz')">AI Quiz</button>
+   <button data-page="career" onclick="show('career')">Career Coach</button>
+   <button data-page="updates" onclick="show('updates')">AI Updates</button>
+   <button data-page="mentor" onclick="show('mentor')">AI Mentor</button>
+   <button data-page="coding" onclick="show('coding')">Coding Lab</button>
+   <button data-page="agents" onclick="show('agents')">AI Agents</button>
+  </div>
+  <div class="streak-card"><strong id="streak">0</strong> day streak<br><span class="muted">Earned from completed work</span></div>
+ </aside>
+
+ <main class="main">
+  <div class="topbar">
+   <span class="pill">Account: <b id="accountId"></b></span>
+   <span class="pill">Active subject: <b id="activeSubject"></b></span>
+   <select class="select" id="globalLanguage" onchange="saveLanguage()"><option value="english">English</option><option value="telugu">తెలుగు</option><option value="hindi">हिन्दी</option></select>
+   <div class="avatar" id="avatar" onclick="openProfile()">K</div>
+  </div>
+
+  <section id="dashboard" class="page active">
+   <div class="hero"><div class="kicker">PERSONAL AI LEARNING MENTOR</div><h1>Learn smarter.<br><span class="gold">Build your future.</span></h1><p id="dashboardDesc">Your selected subject controls your learning roadmap, coding practice, mentor guidance and career recommendations.</p>
+    <div style="display:flex;gap:9px;flex-wrap:wrap"><button class="btn" onclick="show('coding')">Continue learning</button><button class="btn secondary" onclick="show('quiz')">Take 10-question quiz</button></div>
+   </div>
+   <div class="grid four" style="margin-top:15px">
+    <div class="card stat"><span class="muted">Learning progress</span><br><b id="dashProgress">0%</b><div class="bar"><i id="dashBar" style="width:0%"></i></div></div>
+    <div class="card stat"><span class="muted">Weekly goal</span><br><b id="dashWeekly">0 / 6 hrs</b></div>
+    <div class="card stat"><span class="muted">Quiz accuracy</span><br><b id="dashAccuracy">0%</b></div>
+    <div class="card stat"><span class="muted">Current subject</span><br><b id="dashSubject" style="font-size:21px">Python</b></div>
+   </div>
+   <div class="grid two" style="margin-top:15px">
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h2>Change your subject</h2><span class="tag">Global</span></div>
+     <p class="muted">Choose one language. SkillPilot will adapt the learning roadmap, coding lab, mentor, quiz, career advice and updates to that subject.</p>
+     <select class="select" id="subjectSelect" style="width:100%" onchange="changeSubject()"></select>
+     <div id="subjectRoad" class="road" style="margin-top:12px"></div>
+    </div>
+    <div class="card"><h2>AI mentor insight</h2><p id="dashboardInsight">Choose a subject to get a focused recommendation.</p><button class="btn secondary" onclick="newInsight()">Refresh insight</button></div>
+   </div>
+  </section>
+
+  <section id="learning" class="page">
+   <div class="hero"><div class="kicker">MY LEARNING</div><h1>Your learning workspace.</h1><p>Your progress comes from completed coding work and submitted quizzes. Nothing increases just because you opened a page.</p></div>
+   <div class="learning-grid">
+    <div class="card"><div style="display:flex;gap:20px;align-items:center"><div class="progress-ring" id="progressRing"><span id="learningPercent">0%</span></div><div><h2>Personal progress</h2><p class="muted" id="learningSummary">0 completed coding tasks.</p><div class="bar"><i id="learningBar" style="width:0%"></i></div></div></div><h2 style="margin-top:25px">Today's roadmap</h2><div id="learningRoad" class="road"></div></div>
+    <div class="card"><h2>Completed submissions</h2><p class="muted">Open any submitted coding task to review your exact code and result.</p><div id="submissionList" class="submission-list"></div></div>
+   </div>
+   <div class="card" style="margin-top:15px"><h2>Submission review</h2><div id="submissionDetails" class="muted">Select a submission above.</div></div>
+   <div class="card" style="margin-top:15px"><h2>Saved quiz sets</h2><div id="quizHistoryList" class="submission-list"></div></div>
+  </section>
+
+  <section id="quiz" class="page">
+   <div class="hero"><div class="kicker">ADAPTIVE ASSESSMENT</div><h1>10-question quiz.</h1><p id="quizSubjectText">Questions are based on your current subject. Complete the full set and submit once.</p></div>
+   <div class="card" style="margin-top:15px">
+    <div style="display:flex;justify-content:space-between;align-items:center"><span id="quizCounter">Question 1 of 10</span><span class="tag" id="quizTopic">Current subject</span></div>
+    <h2 id="quizQuestion" style="margin-top:22px"></h2>
+    <div id="quizOptions" class="quiz-options"></div>
+    <div id="quizExplanation" class="quiz-result hidden"></div>
+    <div class="quiz-nav"><button class="btn secondary" onclick="quizPrev()">Previous</button><button class="btn" onclick="quizSubmit()">Submit answer</button><button class="btn secondary" onclick="quizNext()">Next</button></div><button id="submitQuizBtn" class="btn" style="width:100%;margin-top:10px;display:none" onclick="finishQuiz()">Submit complete quiz set</button>
+    <div id="quizFinal" class="quiz-result hidden"></div>
+   </div>
+  </section>
+
+  <section id="career" class="page">
+   <div class="hero"><div class="kicker">CAREER COACH</div><h1 id="careerTitle">Your career path.</h1><p id="careerIntro">Career guidance changes with your selected subject.</p></div>
+   <div class="grid two" style="margin-top:15px"><div class="card"><h2>Target role</h2><div class="field"><label>Role</label><select id="role"></select></div><div class="field"><label>Your level</label><select id="level"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></div><button class="btn" onclick="careerPlan()">Generate roadmap</button></div><div class="card"><h2>Recommended roadmap</h2><div id="careerResult" class="muted">Generate a roadmap for your current subject.</div></div></div>
+  </section>
+
+  <section id="updates" class="page">
+   <div class="hero"><div class="kicker">AI & CAREER SIGNALS</div><h1>AI Updates</h1><p id="updatesIntro">Learning and opportunity information follows your current subject.</p></div>
+   <div class="market-grid" id="marketGrid" style="margin-top:15px"></div>
+   <div class="card" style="margin-top:15px"><h2>What to learn next</h2><div id="updateFeed"></div></div>
+  </section>
+
+  <section id="mentor" class="page">
+   <div class="hero"><div class="kicker">AI PERSONAL MENTOR</div><h1>Ask anything about <span id="mentorSubject"></span>.</h1><p>This mentor is aware of your selected subject, career goal and recent learning activity.</p></div>
+   <div class="card" style="margin-top:15px"><div id="mentorChat" class="chat"></div><div class="compose"><input id="mentorInput" placeholder="Ask a subject-related question..." onkeydown="if(event.key==='Enter')sendMentor()"><button class="btn" onclick="sendMentor()">Send</button></div></div>
+  </section>
+
+  <section id="coding" class="page">
+   <div class="hero"><div class="kicker">CODING LAB</div><h1>Build from easy to hard.</h1><p id="codingIntro">Questions start with fundamentals and progress toward arrays, strings, functions, patterns, recursion and algorithms.</p></div>
+   <div class="grid two" style="margin-top:15px">
+    <div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h2 id="codingTitle">Today's challenge</h2><span class="tag" id="codingLevel"></span></div><div><span class="tag" id="codingTopic"></span><span class="tag" id="codingNumber"></span></div><div class="challenge"><b>Problem</b><p id="codingProblem"></p><p class="muted" id="codingExample"></p></div><div class="checklist"><label class="checkrow"><input type="checkbox" id="understood"> I understood the problem</label><label class="checkrow"><input type="checkbox" id="tested"> I tested my solution</label></div><div class="code-actions"><button class="btn secondary" onclick="prevCoding()">Previous</button><button class="btn" onclick="runCode()">Run compiler</button><button class="btn" onclick="submitCode()">Submit solution</button><button class="btn secondary" onclick="nextCoding()">Next</button></div><div class="code-output" id="compilerOutput" style="margin-top:12px">Connect the local compiler backend and run your code.</div><div class="field" style="margin-top:12px"><label>Program input (optional)</label><textarea id="programInput" class="code-editor" style="min-height:90px" placeholder="Enter stdin values here, one per line..."></textarea><p class="muted" style="font-size:12px">Use this like VS Code / an online compiler: your program can read from standard input.</p></div></div>
+    <div class="card"><h2>Your code</h2><textarea id="codeEditor" class="code-editor" spellcheck="false" placeholder="Write your code here..."></textarea><div class="solution-lock" style="margin-top:10px">SkillPilot never shows the complete answer before submission. Use the problem, write your own code, compile it, and submit.</div></div>
+   </div>
+   <div class="card" style="margin-top:15px"><h2>Question history</h2><div id="codingHistory" class="submission-list"></div></div>
+  </section>
+
+  <section id="agents" class="page">
+   <div class="hero"><div class="kicker">MULTI-AGENT WORKSPACE</div><h1>One account. Separate mentors.</h1><p>Each agent keeps its own conversation history. Responses adapt to your current subject.</p></div>
+   <div class="agent-layout" style="margin-top:15px">
+    <div class="card"><h2>Agents</h2><div id="agentList" class="agent-list"></div></div>
+    <div class="card personal-glow"><div style="display:flex;justify-content:space-between;align-items:center"><div><h2 id="agentTitle">Personal Mentor</h2><p class="muted" id="agentSubtitle">Private conversation</p></div><button class="btn secondary" onclick="clearAgent()">Clear chat</button></div><div id="agentChat" class="chat"></div><div class="compose"><input id="agentInput" placeholder="Type or speak..." onkeydown="if(event.key==='Enter')sendAgent()"><button class="mic" id="mic" onclick="voiceInput()">MIC</button><button class="btn" onclick="sendAgent()">Send</button></div><div class="muted" id="voiceStatus" style="font-size:12px;margin-top:6px">Voice: English, Telugu and Hindi when supported by your browser.</div></div>
+   </div>
+  </section>
+ </main>
+</div>
+
+<div id="conceptModal" class="modal"><div class="modalbox" style="max-width:900px;max-height:88vh;overflow:auto">
+ <div class="modalhead"><div><div class="kicker">TODAY'S LEARNING TASK</div><h2 id="conceptTitle">Variables & input</h2><p class="muted" id="conceptMeta">20 min focus · Current subject</p></div><button class="btn secondary" onclick="closeConcept()">Close</button></div>
+ <div id="conceptBody"></div>
+ <div class="card" style="margin-top:14px;background:#0b1220"><div style="display:flex;justify-content:space-between;align-items:center"><b>Focus timer</b><span id="topicTimer" class="tag">20:00</span></div><div class="bar" style="margin-top:10px"><i id="topicTimerBar" style="width:0%"></i></div><div class="quiz-nav" style="margin-top:10px"><button class="btn" onclick="startTopicTimer()" id="timerStart">Start timer</button><button class="btn secondary" onclick="pauseTopicTimer()">Pause</button><button class="btn secondary" onclick="resetTopicTimer()">Reset</button><button class="btn secondary" onclick="completeTopic()">Mark topic complete</button></div></div>
+ <div class="grid two" style="margin-top:14px"><button class="btn secondary" onclick="practiceTopic('quiz')">Practice this topic in AI Quiz</button><button class="btn" onclick="practiceTopic('coding')">Practice this topic in Coding Lab</button></div>
+</div></div>
+<div id="profileModal" class="modal"><div class="modalbox">
+ <div class="modalhead"><div><h2>Your profile</h2><p class="muted">Personalize your SkillPilot workspace.</p></div><button class="btn secondary" onclick="closeProfile()">Close</button></div>
+ <div class="field"><label>Full name</label><input id="profileName"></div>
+ <div class="field"><label>Career goal</label><select id="profileRole"></select></div>
+ <div class="field"><label>Preferred subject</label><select id="profileSubject"></select></div>
+ <button class="btn" style="width:100%" onclick="saveProfile()">Save profile</button>
+ <button class="btn secondary" style="width:100%;margin-top:8px" onclick="logout()">Sign out</button>
+</div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const SUBJECTS={
+"Python Programming":{lang:"python",road:["Variables & input","Loops & conditions","Functions","Lists & strings","OOP","Projects"]},
+"C++ Programming":{lang:"cpp",road:["Variables & input","Loops & conditions","Functions","Arrays & strings","OOP & STL","Projects"]},
+"Java Programming":{lang:"java",road:["Syntax & input","Loops & conditions","Methods","Arrays & strings","OOP & collections","Projects"]},
+"C Programming":{lang:"c",road:["Variables & input","Loops & conditions","Functions","Arrays & strings","Pointers","Projects"]},
+"C# Programming":{lang:"csharp",road:["Syntax & input","Loops & conditions","Methods","Arrays & strings","OOP","Projects"]},
+"JavaScript Programming":{lang:"javascript",road:["Variables & input","Loops","Functions","Arrays & strings","DOM & APIs","Projects"]}
+};
+const TOPIC_DURATIONS={"Variables & input":20,"Syntax & input":20,"Loops & conditions":25,"Loops":25,"Functions":30,"Methods":30,"Lists & strings":30,"Arrays & strings":30,"Arrays":30,"OOP":35,"OOP & STL":35,"OOP & collections":35,"Pointers":30,"DOM & APIs":30,"DOM & APIs":30,"Projects":45};
+function canonicalTopic(topic){const t=String(topic||"");if(/variables|syntax|input/i.test(t))return "Variables & input";if(/loops|conditions/i.test(t))return "Loops & conditions";if(/functions|methods/i.test(t))return "Functions";if(/lists|arrays|strings/i.test(t))return "Arrays & strings";if(/oop/i.test(t))return "OOP";if(/pointer/i.test(t))return "Pointers";if(/dom|api/i.test(t))return "DOM & APIs";return t;}
+function topicDuration(topic){return TOPIC_DURATIONS[topic]||20}
+function topicContent(topic,subject){const c=canonicalTopic(topic);const lang=subject.replace(" Programming","");const examples={
+"Variables & input":{def:`A variable stores a value that your ${lang} program can use and change. Input lets the user provide that value while the program runs.`,how:`Declare a variable, read input, convert it to the needed type, then use it in an expression.`,example:lang==="Python"?`name = input("Enter your name: ")
+age = int(input("Enter age: "))
+print(age + 1)`:lang==="C++"?`string name; int age;
+cin >> name >> age;
+cout << age + 1;`:`Read a value, store it in a variable, then use the variable in a calculation.`,equation:`total = a + b\narea = length × width\naverage = (a + b + c) / 3`,practice:`Read two numbers and print their sum, difference and product.`},
+"Loops & conditions":{def:`A loop repeats work. A condition decides whether a block should run. Together they solve repeated and decision-based tasks.`,how:`Use for/while to repeat and if/else to choose between paths.`,example:`for i = 1 to 5:
+    print(i)
+
+if marks >= 40:
+    print("Pass")`,equation:`sum = 1 + 2 + ... + n = n(n + 1) / 2`,practice:`Print the even numbers from 1 to 20 and count them.`},
+"Functions":{def:`A function is a reusable block of code that can accept inputs (parameters) and return a result.`,how:`Define the function, pass arguments, perform the calculation, and return the result.`,example:`add(a, b) → a + b
+
+add(10, 20) → 30`,equation:`f(x) = x² + 2x + 1`,practice:`Create a function factorial(n) and test it with n = 5.`},
+"Arrays & strings":{def:`An array/list stores multiple values. A string is a sequence of characters.`,how:`Use an index to access elements and loops to process each value.`,example:`numbers = [10, 20, 30]
+first = numbers[0]
+
+text = "SkillPilot"`,equation:`sum = a₁ + a₂ + ... + aₙ`,practice:`Find the largest number in a list without using a built-in maximum function.`},
+"OOP":{def:`Object-oriented programming groups data and behavior into classes and objects.`,how:`Create a class, define attributes and methods, then create objects from it.`,example:`class Student:
+    name
+    study()`,equation:`Object = State (data) + Behavior (methods)`,practice:`Create a Student class with name and marks, then print the student's result.`},
+"Pointers":{def:`A pointer stores the memory address of another variable. It is important in C/C++ for memory and low-level programming.`,how:`Use an address operator to get an address and a dereference operator to access the stored value.`,example:`int x = 10;
+int *p = &x;
+cout << *p;`,equation:`p = &x  →  *p = x`,practice:`Create an integer, point to it, and change its value through the pointer.`},
+"DOM & APIs":{def:`The DOM represents a web page as objects. APIs let JavaScript communicate with services and data.`,how:`Select an element, change it, then use fetch or another API client for external data.`,example:`document.getElementById("title").textContent = "Hello";`,equation:`UI → API request → response → UI update`,practice:`Build a button that changes a page heading when clicked.`},
+"Projects":{def:`A project combines multiple concepts into one useful program.`,how:`Start with requirements, design the data flow, implement small pieces, test them, and improve the result.`,example:`Input → validation → core logic → output → testing`,equation:`Project quality = functionality + usability + testing + documentation`,practice:`Build a small subject-based application using the concepts you completed.`}}
+return examples[c]||examples["Variables & input"]}
+const ROLES={
+"Python Programming":["Python Developer","Backend Developer","Data Analyst","AI/ML Engineer"],
+"C++ Programming":["C++ Developer","Software Developer","Systems Developer","Competitive Programmer"],
+"Java Programming":["Java Developer","Backend Developer","Android Developer","Software Engineer"],
+"C Programming":["Embedded Developer","Systems Programmer","Firmware Developer","Software Developer"],
+"C# Programming":[".NET Developer","Backend Developer","Game Developer","Software Engineer"],
+"JavaScript Programming":["Frontend Developer","Full Stack Developer","Node.js Developer","Web Developer"]
+};
+const ROLE_ROADS={
+"Python Developer":["Python OOP","FastAPI/Django","SQL","Testing","REST APIs","Deploy a project"],
+"Backend Developer":["OOP","REST APIs","SQL","Authentication","Testing","Deployment"],
+"AI/ML Engineer":["Python","NumPy/Pandas","ML","Deep Learning","RAG/LLM","AI project"],
+"C++ Developer":["C++ OOP","STL","DSA","Memory management","Multithreading","C++ project"],
+"Software Developer":["Programming fundamentals","DSA","DBMS","OOP","Git/APIs","Projects"],
+"Systems Developer":["C/C++","OS concepts","Memory","Concurrency","Networking","Systems project"],
+"Competitive Programmer":["C++","STL","Complexity","Graphs","DP","Contest practice"],
+"Java Developer":["Java OOP","Collections","Spring Boot","SQL","REST APIs","Deploy"],
+"Android Developer":["Java/Kotlin basics","Android UI","APIs","Storage","Architecture","Publish app"],
+"Embedded Developer":["C","Microcontrollers","Pointers","UART/SPI/I2C","RTOS basics","Embedded project"],
+"Firmware Developer":["C","Microcontrollers","Drivers","Debugging","Protocols","Firmware project"],
+"Software Engineer":["Programming","DSA","DBMS","OOP","System design","Projects"],
+".NET Developer":["C#","OOP","ASP.NET Core","SQL","REST APIs","Deploy"],
+"Game Developer":["C#","OOP","Game engine basics","Physics","UI","Game project"],
+"Frontend Developer":["JavaScript","HTML/CSS","DOM","React","APIs","Portfolio"],
+"Full Stack Developer":["JavaScript","HTML/CSS","React","Node.js","Database","Full-stack project"],
+"Node.js Developer":["JavaScript","Node.js","REST APIs","SQL/NoSQL","Auth","Deploy"],
+"Web Developer":["HTML/CSS","JavaScript","DOM","APIs","Backend basics","Web project"],
+"Data Analyst":["Python","SQL","Statistics","Pandas","Visualization","Dashboard"]
+};
+
+function q(id,topic,difficulty,title,text,example,starter){return{id,topic,difficulty,title,text,example,starter}}
+const BANK={
+python:[
+q("py01","Basics","Beginner","Sum of numbers","Read N = 10 and calculate 1 + 2 + ... + N.","Expected: 55.","# Write your Python solution here"),
+q("py02","Loops","Beginner","Count even numbers","Count how many even numbers exist from 1 to 20.","Expected: 10.","# Write your Python solution here"),
+q("py03","While Loop","Beginner","Reverse a number","Reverse the number 12345 using a while loop.","Expected: 54321.","# Write your Python solution here"),
+q("py04","Functions","Beginner","Add two numbers","Create add(a,b) and return the sum. Test with 15 and 27.","Expected: 42.","def add(a,b):\\n    # write your code\\n    pass\\n\\nprint(add(15,27))"),
+q("py05","Patterns","Beginner","Star square","Print a 5 x 5 square of stars using nested loops.","Five rows, five stars per row.","# Use nested loops to print the pattern"),
+q("py06","Functions","Beginner","Factorial","Create factorial(n) using a loop and test factorial(5).","Expected: 120.","def factorial(n):\\n    # write your code\\n    pass\\n\\nprint(factorial(5))"),
+q("py07","Arrays","Intermediate","Largest in a list","Find the largest number in [12,7,31,4,19] without using max().","Expected: 31.","arr=[12,7,31,4,19]\\n# write your solution"),
+q("py08","Strings","Intermediate","Count vowels","Count vowels in the string 'skillpilot'.","Expected: 3.","s='skillpilot'\\n# write your solution"),
+q("py09","Recursion","Intermediate","Recursive sum","Create a recursive function to calculate the sum from 1 to N.","Test N=5; expected 15.","def recursive_sum(n):\\n    # write your code\\n    pass"),
+q("py10","Algorithms","Advanced","Second largest","Find the second-largest unique value in [10,45,22,45,31,18].","Expected: 31.","arr=[10,45,22,45,31,18]\\n# write your solution"),
+q("py11","Sorting","Advanced","Bubble sort","Implement bubble sort for [5,1,4,2,8].","Expected: [1,2,4,5,8].","# implement bubble sort"),
+q("py12","Data Structures","Advanced","Frequency map","Build a frequency dictionary for [2,3,2,4,3,2].","Expected: {2:3,3:2,4:1}.","# build the frequency map")
+],
+cpp:[
+q("cpp01","Basics","Beginner","Sum of numbers","Calculate 1 + 2 + ... + 10 using a for loop.","Expected: 55.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // write your solution\\n    return 0;\\n}"),
+q("cpp02","Loops","Beginner","Count even numbers","Count even numbers from 1 to 20.","Expected: 10.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // write your solution\\n    return 0;\\n}"),
+q("cpp03","While Loop","Beginner","Reverse a number","Reverse 12345 using a while loop.","Expected: 54321.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // write your solution\\n    return 0;\\n}"),
+q("cpp04","Functions","Beginner","Add two numbers","Create add(a,b) and return the sum. Test 15 and 27.","Expected: 42.","#include <iostream>\\nusing namespace std;\\nint add(int a,int b){\\n    // write your code\\n}\\nint main(){return 0;}"),
+q("cpp05","Patterns","Beginner","Star square","Print a 5 x 5 square of stars using nested loops.","Five rows, five stars per row.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // nested loops\\n    return 0;\\n}"),
+q("cpp06","Functions","Beginner","Factorial","Create factorial(n) using a loop and test factorial(5).","Expected: 120.","#include <iostream>\\nusing namespace std;\\nint factorial(int n){\\n    // write your code\\n}\\nint main(){return 0;}"),
+q("cpp07","Arrays","Intermediate","Largest in an array","Find the largest value in {12,7,31,4,19}.","Expected: 31.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    int a[]={12,7,31,4,19};\\n    // write your solution\\n}"),
+q("cpp08","Strings","Intermediate","Count vowels","Count vowels in the string 'skillpilot'.","Expected: 3.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    string s=\"skillpilot\";\\n    // write your solution\\n}"),
+q("cpp09","Recursion","Intermediate","Recursive sum","Create a recursive function that returns 1+2+...+N.","Test N=5; expected 15.","#include <iostream>\\nusing namespace std;\\nint recursiveSum(int n){\\n    // write your code\\n}"),
+q("cpp10","Algorithms","Advanced","Second largest","Find the second-largest unique value in {10,45,22,45,31,18}.","Expected: 31.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // write your solution\\n}"),
+q("cpp11","Sorting","Advanced","Bubble sort","Implement bubble sort for {5,1,4,2,8}.","Expected: 1 2 4 5 8.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // write bubble sort\\n}"),
+q("cpp12","Data Structures","Advanced","Frequency map","Count occurrences of 2,3,2,4,3,2.","Expected: 2->3, 3->2, 4->1.","#include <iostream>\\nusing namespace std;\\nint main(){\\n    // use a map\\n}")
+],
+java:[
+q("java01","Basics","Beginner","Sum of numbers","Calculate 1 + 2 + ... + 10 using a for loop.","Expected: 55.","import java.util.*;\\nclass Main{public static void main(String[] args){\\n // write your solution\\n}}"),
+q("java02","Loops","Beginner","Count even numbers","Count even numbers from 1 to 20.","Expected: 10.","class Main{public static void main(String[] args){\\n // write your solution\\n}}"),
+q("java03","While Loop","Beginner","Reverse a number","Reverse 12345 using a while loop.","Expected: 54321.","class Main{public static void main(String[] args){\\n // write your solution\\n}}"),
+q("java04","Methods","Beginner","Add two numbers","Create add(a,b) and return the sum. Test 15 and 27.","Expected: 42.","class Main{static int add(int a,int b){return 0;} public static void main(String[] args){}}"),
+q("java05","Patterns","Beginner","Star square","Print a 5 x 5 square of stars using nested loops.","Five rows.","class Main{public static void main(String[] args){\\n // nested loops\\n}}"),
+q("java06","Methods","Beginner","Factorial","Create factorial(n) using a loop.","Expected: 120 for 5.","class Main{static int factorial(int n){return 0;} public static void main(String[] args){}}"),
+q("java07","Arrays","Intermediate","Largest in array","Find the largest value in {12,7,31,4,19}.","Expected: 31.","class Main{public static void main(String[] args){int[] a={12,7,31,4,19};\\n // solution\\n}}"),
+q("java08","Strings","Intermediate","Count vowels","Count vowels in 'skillpilot'.","Expected: 3.","class Main{public static void main(String[] args){String s=\"skillpilot\";\\n // solution\\n}}"),
+q("java09","Recursion","Intermediate","Recursive sum","Create recursive sum 1..N.","Test N=5; expected 15.","class Main{static int sum(int n){return 0;} public static void main(String[] args){}}"),
+q("java10","Algorithms","Advanced","Second largest","Find the second-largest unique value.","Expected: 31.","class Main{public static void main(String[] args){\\n // solution\\n}}"),
+q("java11","Sorting","Advanced","Bubble sort","Implement bubble sort for {5,1,4,2,8}.","Expected: 1 2 4 5 8.","class Main{public static void main(String[] args){\\n // bubble sort\\n}}"),
+q("java12","Collections","Advanced","Frequency map","Count frequency of 2,3,2,4,3,2.","Expected: 2->3,3->2,4->1.","import java.util.*;\\nclass Main{public static void main(String[] args){\\n // solution\\n}}")
+],
+c:[
+q("c01","Basics","Beginner","Sum of numbers","Calculate 1 + 2 + ... + 10 using a loop.","Expected: 55.","#include <stdio.h>\\nint main(){\\n // solution\\n return 0;\\n}"),
+q("c02","Loops","Beginner","Count even numbers","Count even numbers from 1 to 20.","Expected: 10.","#include <stdio.h>\\nint main(){\\n // solution\\n return 0;\\n}"),
+q("c03","While Loop","Beginner","Reverse a number","Reverse 12345 using while.","Expected: 54321.","#include <stdio.h>\\nint main(){\\n // solution\\n return 0;\\n}"),
+q("c04","Functions","Beginner","Add two numbers","Create add(a,b) and return sum.","Expected: 42.","#include <stdio.h>\\nint add(int a,int b){return 0;}\\nint main(){return 0;}"),
+q("c05","Patterns","Beginner","Star square","Print a 5 x 5 star square.","Five rows.","#include <stdio.h>\\nint main(){\\n // nested loops\\n}"),
+q("c06","Functions","Beginner","Factorial","Create factorial(n) using a loop.","Expected: 120.","#include <stdio.h>\\nint factorial(int n){return 0;}\\nint main(){return 0;}"),
+q("c07","Arrays","Intermediate","Largest array value","Find largest in {12,7,31,4,19}.","Expected: 31.","#include <stdio.h>\\nint main(){int a[]={12,7,31,4,19};\\n // solution\\n}"),
+q("c08","Strings","Intermediate","Count vowels","Count vowels in skillpilot.","Expected: 3.","#include <stdio.h>\\nint main(){char s[]=\"skillpilot\";\\n // solution\\n}"),
+q("c09","Recursion","Intermediate","Recursive sum","Return 1..N recursively.","Expected for 5: 15.","#include <stdio.h>\\nint sum(int n){return 0;}\\nint main(){return 0;}"),
+q("c10","Algorithms","Advanced","Second largest","Find second-largest unique value.","Expected: 31.","#include <stdio.h>\\nint main(){\\n // solution\\n}"),
+q("c11","Sorting","Advanced","Bubble sort","Implement bubble sort.","Expected: 1 2 4 5 8.","#include <stdio.h>\\nint main(){\\n // solution\\n}"),
+q("c12","Data Structures","Advanced","Frequency array","Count occurrences in a small integer array.","Expected counts for 2,3,4.","#include <stdio.h>\\nint main(){\\n // solution\\n}")
+],
+csharp:[
+q("cs01","Basics","Beginner","Sum of numbers","Calculate 1 + 2 + ... + 10.","Expected: 55.","using System;\\nclass Program{static void Main(){\\n // solution\\n}}"),
+q("cs02","Loops","Beginner","Count even numbers","Count even numbers from 1 to 20.","Expected: 10.","using System;\\nclass Program{static void Main(){\\n // solution\\n}}"),
+q("cs03","While Loop","Beginner","Reverse a number","Reverse 12345 using while.","Expected: 54321.","using System;\\nclass Program{static void Main(){\\n // solution\\n}}"),
+q("cs04","Methods","Beginner","Add two numbers","Create Add(a,b) and return sum.","Expected: 42.","using System;\\nclass Program{static int Add(int a,int b){return 0;} static void Main(){}}"),
+q("cs05","Patterns","Beginner","Star square","Print a 5 x 5 star square.","Five rows.","using System;\\nclass Program{static void Main(){\\n // nested loops\\n}}"),
+q("cs06","Methods","Beginner","Factorial","Create Factorial(n) using a loop.","Expected: 120.","using System;\\nclass Program{static int Factorial(int n){return 0;} static void Main(){}}"),
+q("cs07","Arrays","Intermediate","Largest value","Find largest in {12,7,31,4,19}.","Expected: 31.","using System;\\nclass Program{static void Main(){int[] a={12,7,31,4,19};\\n // solution\\n}}"),
+q("cs08","Strings","Intermediate","Count vowels","Count vowels in skillpilot.","Expected: 3.","using System;\\nclass Program{static void Main(){string s=\"skillpilot\";\\n // solution\\n}}"),
+q("cs09","Recursion","Intermediate","Recursive sum","Return 1..N recursively.","Expected: 15 for N=5.","using System;\\nclass Program{static int Sum(int n){return 0;} static void Main(){}}"),
+q("cs10","Algorithms","Advanced","Second largest","Find second-largest unique value.","Expected: 31.","using System;\\nclass Program{static void Main(){\\n // solution\\n}}"),
+q("cs11","Sorting","Advanced","Bubble sort","Implement bubble sort.","Expected: 1 2 4 5 8.","using System;\\nclass Program{static void Main(){\\n // solution\\n}}"),
+q("cs12","Collections","Advanced","Frequency map","Count frequencies in an integer array.","Expected: 2->3,3->2,4->1.","using System;\\nclass Program{static void Main(){\\n // solution\\n}}")
+],
+javascript:[
+q("js01","Basics","Beginner","Sum of numbers","Calculate 1 + 2 + ... + 10.","Expected: 55.","// Write your JavaScript solution here"),
+q("js02","Loops","Beginner","Count even numbers","Count even numbers from 1 to 20.","Expected: 10.","// Write your JavaScript solution here"),
+q("js03","While Loop","Beginner","Reverse a number","Reverse 12345 using while.","Expected: 54321.","// Write your JavaScript solution here"),
+q("js04","Functions","Beginner","Add two numbers","Create add(a,b) and return sum.","Expected: 42.","function add(a,b){ /* write code */ }\\nconsole.log(add(15,27));"),
+q("js05","Patterns","Beginner","Star square","Print a 5 x 5 star square.","Five rows.","// Use nested loops"),
+q("js06","Functions","Beginner","Factorial","Create factorial(n).","Expected: 120.","function factorial(n){ /* write code */ }"),
+q("js07","Arrays","Intermediate","Largest value","Find largest in [12,7,31,4,19] without Math.max.","Expected: 31.","const arr=[12,7,31,4,19];\\n// solution"),
+q("js08","Strings","Intermediate","Count vowels","Count vowels in skillpilot.","Expected: 3.","const s='skillpilot';\\n// solution"),
+q("js09","Recursion","Intermediate","Recursive sum","Return 1..N recursively.","Expected: 15 for N=5.","function sum(n){ /* solution */ }"),
+q("js10","Algorithms","Advanced","Second largest","Find second-largest unique value.","Expected: 31.","const arr=[10,45,22,45,31,18];\\n// solution"),
+q("js11","Sorting","Advanced","Bubble sort","Implement bubble sort.","Expected: [1,2,4,5,8].","// solution"),
+q("js12","Objects","Advanced","Frequency map","Count frequencies in [2,3,2,4,3,2].","Expected: 2:3,3:2,4:1.","// solution")
+]};
+const QUIZZES={
+"Python Programming":[
+["Which keyword defines a Python function?",["def","func","function","define"],0,"Python uses def to define a function."],
+["What does len([1,2,3]) return?",["2","3","4","Error"],1,"len returns the number of elements."],
+["Which type is immutable?",["list","set","dictionary","tuple"],3,"Tuples are immutable."],
+["What does // do?",["Normal division","Floor division","Power","Comment"],1,"// performs floor division."],
+["Which loop is best when the count is known?",["for","while","try","switch"],0,"for is commonly used for known iteration."],
+["What is a dictionary key required to be?",["Unique","Sorted","Numeric","A list"],0,"Keys must be unique."],
+["What does append do to a list?",["Deletes","Adds at end","Sorts","Copies"],1,"append adds one item at the end."],
+["Which keyword handles exceptions?",["catch","except","error","handle"],1,"Python uses except."],
+["What is OOP based around?",["Objects","Only loops","Only functions","SQL"],0,"OOP organizes programs around objects/classes."],
+["Which library is widely used for arrays/data in Python?",["Pandas","NumPy","Both","Neither"],2,"Both are common; NumPy focuses on arrays and Pandas on tabular data."],["Which statement creates a range from 0 to 4?", ["range(5)", "range(1,5)", "range(0,4)", "series(5)"], 0, "range(5) produces 0,1,2,3,4."],["What does a set mainly store?", ["Unique values", "Only keys", "Ordered duplicates", "Only strings"], 0, "Sets store unique values."],["Which keyword exits a loop early?", ["break", "stop", "exitloop", "end"], 0, "break exits the current loop."],["Which keyword skips to the next iteration?", ["continue", "skip", "next", "passloop"], 0, "continue moves to the next iteration."],["What does pass do?", ["Nothing as a placeholder", "Stops the program", "Returns a value", "Repeats a loop"], 0, "pass is a no-op placeholder."],["Which structure is key-value based?", ["Dictionary", "Tuple", "List", "Set"], 0, "Dictionaries map keys to values."],["What is a lambda?", ["Anonymous function", "Loop", "Class", "Module"], 0, "A lambda is an anonymous function."],["Which library is common for numerical arrays?", ["NumPy", "Flask", "Requests", "Tkinter"], 0, "NumPy provides numerical arrays."],["Which method removes and returns the last list item?", ["pop", "removeLast", "delete", "pull"], 0, "list.pop() removes and returns an item."],["What does == compare?", ["Values for equality", "Identity only", "Assignment", "Types only"], 0, "== tests equality."]],
+"C++ Programming":[
+["Which header provides cout?",["iostream","stdio.h","string.h","vector.h"],0,"iostream provides standard streams."],
+["Which operator is used for scope resolution?",["::","->","..","=>"],0,"C++ uses :: for scope resolution."],
+["Which container stores dynamic arrays?",["vector","stack","map","queue"],0,"vector is a dynamic array container."],
+["What is the entry point?",["start()","main()","run()","init()"],1,"C++ programs begin execution in main."],
+["Which concept hides implementation details?",["Encapsulation","Iteration","Compilation","Linking"],0,"Encapsulation hides internal state/implementation."],
+["Which is LIFO?",["Queue","Stack","Array","Graph"],1,"Stack follows Last-In First-Out."],
+["Average binary search complexity?",["O(n)","O(log n)","O(n²)","O(1)"],1,"Binary search halves the search space."],
+["Which keyword creates an object dynamically?",["new","make","alloc","create"],0,"new allocates dynamically."],
+["What does STL stand for?",["Standard Template Library","Simple Type Language","System Tool Layer","Static Type List"],0,"STL is Standard Template Library."],
+["Which feature allows same function name with different parameters?",["Overloading","Overriding","Casting","Linking"],0,"Function overloading uses different parameter lists."],["Which container stores key-value pairs?", ["map", "vector", "array", "stack"], 0, "std::map stores key-value pairs."],["Which symbol accesses a member through a pointer?", ["->", ".", "::", "*"], 0, "-> accesses a member through a pointer."],["Which keyword declares a constant?", ["const", "fixed", "constant", "readonly"], 0, "const prevents modification."],["Which cast is used for explicit numeric conversion?", ["static_cast", "convert", "castto", "number_cast"], 0, "static_cast performs explicit conversions."],["Which STL container is FIFO?", ["queue", "stack", "vector", "set"], 0, "queue follows FIFO."],["What is a constructor?", ["Special member used to initialize objects", "A loop", "A header", "A pointer"], 0, "Constructors initialize objects."],["What does virtual support?", ["Runtime polymorphism", "Compilation", "Memory allocation", "Templates"], 0, "virtual supports dynamic dispatch."],["Which feature lets a class derive from another?", ["Inheritance", "Iteration", "Inlining", "Parsing"], 0, "Inheritance derives classes."],["Which operator is commonly overloaded for stream output?", ["operator<<", "operator>>", "stream()", "cout()"], 0, "operator<< is used for output."],["Which header contains std::string?", ["string", "cstringonly", "text", "iostreamonly"], 0, "<string> provides std::string."]],
+"Java Programming":[
+["Which method starts a Java program?",["start","main","run","init"],1,"Execution starts at main."],
+["Which keyword creates an object?",["new","make","object","create"],0,"new creates an object."],
+["Which collection stores key-value pairs?",["List","Map","Queue","Set"],1,"Map stores key-value pairs."],
+["Which is not primitive?",["int","double","String","char"],2,"String is a class."],
+["Which keyword inherits a class?",["extends","inherits","using","base"],0,"extends creates class inheritance."],
+["Which block handles exceptions?",["try/catch","if/else","loop","switch"],0,"try/catch handles exceptions."],
+["Array indexes start at?",["0","1","-1","Depends"],0,"Java arrays are zero-indexed."],
+["Which is immutable?",["String","StringBuilder","ArrayList","HashMap"],0,"String is immutable."],
+["JVM means?",["Java Virtual Machine","Java Variable Method","Joint VM","Java Visual Model"],0,"JVM executes Java bytecode."],
+["Which keyword prevents inheritance?",["final","static","private","const"],0,"A final class cannot be extended."],["Which keyword prevents reassignment?", ["final", "const", "fixed", "staticonly"], 0, "final prevents reassignment."],["Which interface is commonly used for lists?", ["List", "Map", "Queue", "ObjectList"], 0, "List is the common list interface."],["Which keyword calls a parent constructor?", ["super", "parent", "base", "thisparent"], 0, "super() calls the parent constructor."],["Which keyword refers to the current object?", ["this", "self", "current", "object"], 0, "this refers to the current object."],["Which collection avoids duplicate elements?", ["Set", "List", "ArrayList", "Vector"], 0, "Set does not allow duplicate elements."],["Which keyword defines class inheritance?", ["extends", "inherits", "derive", "superclass"], 0, "extends defines inheritance."],["Which keyword defines an interface?", ["interface", "protocol", "contract", "abstractonly"], 0, "interface declares an interface."],["Which is a runtime exception?", ["NullPointerException", "IOException", "SQLException", "FileNotFoundException"], 0, "NullPointerException is unchecked."],["Which collection stores key-value mappings?", ["HashMap", "ArrayList", "LinkedList", "Stack"], 0, "HashMap stores key-value mappings."],["What does static mean for a method?", ["Belongs to the class", "Always constant", "Private", "Final"], 0, "A static method belongs to the class."]],
+"C Programming":[
+["Which function prints formatted output?",["printf","print","cout","echo"],0,"printf is C's formatted output function."],
+["Which header provides printf?",["stdio.h","iostream","string","stdlib"],0,"stdio.h declares printf."],
+["Array indexing starts at?",["0","1","-1","2"],0,"C arrays are zero-indexed."],
+["Which symbol gets an address?",["&","*","#","@"],0,"& is the address-of operator."],
+["Which symbol dereferences a pointer?",["*","&","->","%"],0,"* dereferences a pointer."],
+["Which loop executes at least once?",["do-while","for","while","none"],0,"do-while checks the condition after the body."],
+["Which type stores a single character?",["char","string","text","byte"],0,"char stores one character."],
+["What ends a C statement?",[";",";",":","."],0,"A semicolon terminates a statement."],
+["Which function allocates memory?",["malloc","alloc","new","create"],0,"malloc dynamically allocates memory."],
+["Which keyword returns from a function?",["return","break","exit","back"],0,"return sends control/value back."],["Which header provides malloc?", ["stdlib.h", "stdio.h", "string.h", "memory.h"], 0, "malloc is declared in stdlib.h."],["What does sizeof return?", ["Size in bytes", "Number of elements always", "Address", "Value"], 0, "sizeof returns size in bytes."],["Which operator accesses a struct member directly?", [".", "->", "::", "*"], 0, ". accesses a struct member."],["Which operator accesses a struct through a pointer?", ["->", ".", "::", "&"], 0, "-> accesses through a pointer."],["What is a NULL pointer?", ["Pointer with no valid target", "Pointer to zero-sized array", "Integer", "Function"], 0, "NULL indicates no valid target."],["Which function compares strings?", ["strcmp", "compare", "strcompare", "equals"], 0, "strcmp compares C strings."],["Which function copies strings?", ["strcpy", "copystr", "strcopy", "memcopystr"], 0, "strcpy copies a C string."],["Which keyword preserves a local value between calls?", ["static", "keep", "persist", "register"], 0, "static locals retain their value."],["Which keyword defines a structure?", ["struct", "record", "object", "class"], 0, "struct defines a structure."],["Which loop repeats while a condition is true?", ["while", "foronly", "switch", "ifloop"], 0, "while repeats while true."]],
+"C# Programming":[
+["Which platform is C# strongly associated with?",[".NET","JVM","PHP","Ruby"],0,"C# is part of the .NET ecosystem."],
+["Which method starts a console app?",["Main","Start","Run","Init"],0,"Main is the entry point."],
+["Which keyword creates an object?",["new","make","create","object"],0,"new creates an object."],
+["Which type stores text?",["string","char","text","str"],0,"string stores text."],
+["Which keyword defines a class?",["class","type","object","structonly"],0,"class defines a class."],
+["Which loop is common for known counts?",["for","try","catch","switch"],0,"for is used for counted iteration."],
+["Which collection is dynamic?",["List<T>","int","char","bool"],0,"List<T> is a dynamic generic collection."],
+["Which handles exceptions?",["try/catch","if","loop","switch"],0,"try/catch handles exceptions."],
+["Which access modifier exposes members broadly?",["public","private","hidden","internalonly"],0,"public is accessible from other code."],
+["Which keyword prevents a class from being inherited?",["sealed","final","stop","closed"],0,"sealed prevents inheritance."],["Which keyword refers to the current object?", ["this", "self", "current", "object"], 0, "this refers to the current instance."],["Which keyword accesses base-class members?", ["base", "super", "parent", "up"], 0, "base accesses base-class members."],["Which collection is key-value based?", ["Dictionary<TKey,TValue>", "List<T>", "Queue<T>", "Stack<T>"], 0, "Dictionary stores key-value pairs."],["Which keyword marks an async method?", ["async", "awaitonly", "future", "taskonly"], 0, "async marks an asynchronous method."],["Which keyword waits for a Task?", ["await", "wait", "join", "pause"], 0, "await waits asynchronously for a Task."],["Which keyword can prevent inheritance?", ["sealed", "final", "locked", "fixed"], 0, "sealed prevents inheritance."],["Which type stores true or false?", ["bool", "boolean", "bit", "truth"], 0, "bool stores true or false."],["Which namespace contains List<T>?", ["System.Collections.Generic", "System.List", "System.Collections", "System.Types"], 0, "List<T> is in System.Collections.Generic."],["Which concept allows different implementations behind one type?", ["Polymorphism", "Parsing", "Boxing", "Compilation"], 0, "Polymorphism supports substitutable implementations."],["Which keyword defines an interface?", ["interface", "contract", "protocol", "implements"], 0, "interface declares an interface."]],
+"JavaScript Programming":[
+["Which keyword declares a block-scoped variable?",["let","varlet","define","dim"],0,"let is block scoped."],
+["Which method adds to an array?",["push","add","append","insert"],0,"push adds an element to the end."],
+["Which symbol starts a strict equality check?",["===","==","=","=>"],0,"=== checks value and type."],
+["Which function converts JSON text to an object?",["JSON.parse","JSON.read","JSON.object","parseJSONOnly"],0,"JSON.parse converts text to an object."],
+["Which keyword creates a function?",["function","def","func","method"],0,"JavaScript uses function or arrow syntax."],
+["Which is not primitive?",["Object","number","boolean","string"],0,"Object is a reference type."],
+["Which method maps an array?",["map","loop","convert","each"],0,"map returns a transformed array."],
+["What does DOM mean?",["Document Object Model","Data Object Map","Digital Output Mode","Document Order Map"],0,"DOM represents the document as objects."],
+["Which runtime commonly executes JS outside browsers?",["Node.js","JVM","CLR","CPython"],0,"Node.js is a JavaScript runtime."],
+["Which operator is logical AND?",["&&","||","!","and"],0,"&& is logical AND."],["Which keyword declares a block-scoped variable?", ["let", "varlet", "define", "dim"], 0, "let is block scoped."],["Which method adds an array element?", ["push", "add", "append", "insert"], 0, "push adds to the end."],["Which method transforms every array element?", ["map", "loop", "convert", "each"], 0, "map returns a transformed array."],["Which keyword handles exceptions?", ["catch", "except", "handle", "error"], 0, "JavaScript uses try/catch."],["Which structure stores key-value properties?", ["Object", "Tuple", "Dictionary", "ArrayOnly"], 0, "Objects store key-value properties."],["Which operator is optional chaining?", ["?.", "??", "::", "->"], 0, "?. safely accesses nullable properties."],["Which operator provides nullish fallback?", ["??", "||?", "?:", "fallback"], 0, "?? handles null or undefined."],["Which API selects an element by id?", ["document.getElementById", "document.id", "get.id", "queryId"], 0, "getElementById selects by id."],["Which keyword imports an ES module?", ["import", "include", "requireonly", "using"], 0, "ES modules use import."],["Which keyword exports an ES module member?", ["export", "expose", "public", "module"], 0, "ES modules use export."]]};
+const AGENTS={
+personal:["Personal Mentor","General planning and personal study support"],
+subject:["Subject Mentor","Deep subject explanations and practice"],
+debug:["Code Debugger","Debugging, errors and code improvement"],
+career:["Career Mentor","Roles, skills, projects and interview preparation"],
+study:["Study Coach","Revision plans, concepts and exam preparation"]};
+
+let mode="login",activePage="dashboard",quizSet=[],quizIndex=0,quizAnswers={},quizSubmitted=false,codingIndex=0,activeAgent="personal",currentCodeQuestion=null,selectedLearningTopic=null,topicTimerId=null,topicTimerEnd=0,topicTimerRemaining=0;
+
+function key(id){return "sp_v6_"+id.toLowerCase()}
+function account(){const id=localStorage.getItem("sp_user");try{return id?JSON.parse(localStorage.getItem(key(id))||"null"):null}catch(e){return null}}
+function save(a){localStorage.setItem(key(a.id),JSON.stringify(a))}
+function today(){return new Date().toISOString().slice(0,10)}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
+function toast(s){const t=document.getElementById("toast");t.textContent=s;t.style.display="block";clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display="none",2400)}
+function setAuthMode(x){mode=x;document.getElementById("loginTab").classList.toggle("active",x==="login");document.getElementById("signupTab").classList.toggle("active",x==="signup");document.getElementById("authTitle").textContent=x==="login"?"Welcome back":"Create your SkillPilot account";document.getElementById("authSub").textContent=x==="login"?"Sign in to open your saved workspace.":"Create the account once and return with the same credentials.";document.querySelectorAll(".signup-only").forEach(e=>e.classList.toggle("hidden",x!=="signup"));document.getElementById("authButton").textContent=x==="login"?"Sign in to SkillPilot":"Create account";document.getElementById("authError").textContent=""}
+function submitAuth(){const id=document.getElementById("authUser").value.trim().toLowerCase(),pw=document.getElementById("authPass").value,e=document.getElementById("authError");if(!/^[a-z0-9_.-]{3,30}$/.test(id)){e.textContent="Use a valid User ID.";return}if(pw.length<4){e.textContent="Password must be at least 4 characters.";return}
+ if(mode==="signup"){if(localStorage.getItem(key(id))){e.textContent="User ID already exists. Sign in instead.";return}const a={id,password:pw,name:document.getElementById("authName").value.trim()||id,subject:"Python Programming",role:"Python Developer",language:"english",streak:0,lastCompletedDate:null,lastLoginDate:null,completedTopics:[],submissions:[],quizHistory:[],quizSolved:[],agentChats:{},weeklyMinutes:0};Object.keys(AGENTS).forEach(k=>a.agentChats[k]=[]);save(a);localStorage.setItem("sp_user",id);openApp();toast("Account created")}
+ else{let a;try{a=JSON.parse(localStorage.getItem(key(id))||"null")}catch(x){}if(!a){e.textContent="Account not found. Create the account first.";return}if(a.password!==pw){e.textContent="Incorrect password.";return}localStorage.setItem("sp_user",id);openApp();toast("Signed in")}}
+function touchLoginStreak(a){const d=today();if(a.lastLoginDate===d)return;const prev=a.lastLoginDate;if(!prev)a.streak=1;else{const diff=Math.round((new Date(d)-new Date(prev))/86400000);a.streak=diff===1?(a.streak||0)+1:1}a.lastLoginDate=d;save(a);}
+function openApp(){document.getElementById("login").classList.add("hidden");document.getElementById("app").classList.remove("hidden");const a=account();touchLoginStreak(a);document.getElementById("accountId").textContent=a.id;document.getElementById("avatar").textContent=a.name.charAt(0).toUpperCase();document.getElementById("streak").textContent=a.streak||0;fillProfile();renderAll();show(activePage)}
+function logout(){localStorage.removeItem("sp_user");document.getElementById("profileModal").classList.remove("show");document.getElementById("app").classList.add("hidden");document.getElementById("login").classList.remove("hidden");setAuthMode("login");toast("Signed out")}
+function show(id){activePage=id;document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===id));if(id==="quiz")startQuiz();if(id==="coding")loadCoding();if(id==="agents")renderAgents();if(id==="mentor")renderMentor();if(id==="learning")renderLearning()}
+function renderAll(){renderDashboard();renderLearning();renderQuizUI();renderCareer();renderUpdates();renderMentor();renderAgents();renderCodingHistory();}
+
+function changeSubject(){const a=account(),s=document.getElementById("subjectSelect").value;a.subject=s;a.learningTopic=SUBJECTS[s].road[0];const roles=ROLES[s];a.role=roles[0];save(a);renderAll();show("dashboard");toast("Subject changed to "+s)}
+function renderDashboard(){const a=account(),s=a.subject;document.getElementById("activeSubject").textContent=s;document.getElementById("dashSubject").textContent=s;document.getElementById("mentorSubject").textContent=s;document.getElementById("subjectSelect").innerHTML=Object.keys(SUBJECTS).map(x=>`<option ${x===s?"selected":""}>${x}</option>`).join("");document.getElementById("subjectRoad").innerHTML=SUBJECTS[s].road.map((x,i)=>`<div class="step"><div class="num">${i+1}</div><div><b>${x}</b><p class="muted" style="margin:4px 0">Focused on ${s}.</p></div></div>`).join("");document.getElementById("dashboardDesc").textContent=`Your entire SkillPilot workspace is now aligned to ${s}. Coding, quizzes, mentor guidance, career roles and updates follow this subject.`;document.getElementById("dashboardInsight").textContent=`For ${s}, your next best step is ${SUBJECTS[s].road[1]}, followed by daily coding practice.`;const done=(a.completedTopics||[]).filter(x=>SUBJECTS[s].road.includes(x)).length;const total=a.submissions.filter(x=>x.subject===s).length;const prog=Math.min(100,Math.round(done/6*60+total/6*25+Math.min(a.quizHistory.filter(x=>x.subject===s).length,5)/5*15));document.getElementById("dashProgress").textContent=prog+"%";document.getElementById("dashBar").style.width=prog+"%";document.getElementById("dashWeekly").textContent=(a.weeklyMinutes/60).toFixed(1)+" / 6 hrs";const qa=a.quizHistory.reduce((z,x)=>z+x.score,0),qc=a.quizHistory.length*10;document.getElementById("dashAccuracy").textContent=qc?Math.round(qa/qc*100)+"%":"0%"}
+function newInsight(){const a=account(),s=a.subject;const arr=[`Focus on ${SUBJECTS[s].road[1]} today and solve one problem.`,`After ${SUBJECTS[s].road[2]}, start a small ${s} project.`,`Your coding difficulty will rise from fundamentals to algorithms as you submit work.`];document.getElementById("dashboardInsight").textContent=arr[Math.floor(Math.random()*arr.length)]}
+
+function renderLearning(){const a=account(),n=a.submissions.filter(x=>x.subject===a.subject).length,qs=a.quizHistory.filter(x=>x.subject===a.subject).length,done=new Set(a.completedTopics||[]);const road=SUBJECTS[a.subject].road;const topicDone=road.filter(x=>done.has(x)).length;const p=Math.min(100,Math.round(topicDone/road.length*60+n/Math.max(road.length,1)*25+Math.min(qs,5)/5*15));document.getElementById("learningPercent").textContent=p+"%";document.getElementById("learningBar").style.width=p+"%";document.getElementById("progressRing").style.background=`conic-gradient(var(--gold) ${p}%,#202a40 ${p}%)`;document.getElementById("learningSummary").textContent=`${topicDone}/${road.length} learning topics completed · ${n} coding submissions · ${qs} quiz sets submitted.`;document.getElementById("learningRoad").innerHTML=road.map((x,i)=>{const d=done.has(x),mins=topicDuration(x);return `<button class="step" style="width:100%;text-align:left;cursor:pointer" onclick="openConcept(${i})"><div class="num">${i+1}</div><div style="flex:1"><b>${esc(x)}</b><p class="muted" style="margin:4px 0">${d?"Completed":"Learn this topic"} · ${mins} min focus</p></div><span class="tag">${d?"✓ Done":"Open →"}</span></button>`}).join("");document.getElementById("submissionList").innerHTML=a.submissions.length?a.submissions.map((x,i)=>`<div class="submission-item" onclick="viewSubmission(${i})"><b>${esc(x.title)}</b><div class="muted" style="font-size:12px">${x.language} · ${x.topic} · ${x.date}</div></div>`).join(""):"<div class='muted'>No coding submissions yet.</div>";document.getElementById("quizHistoryList").innerHTML=a.quizHistory.length?a.quizHistory.map((x,i)=>`<div class="submission-item" onclick="viewQuizHistory(${i})"><b>${x.subject} — Set ${x.set}</b><div class="muted">${x.topic?esc(x.topic)+" · ":""}Score ${x.score}/10 · ${x.date}</div></div>`).join(""):"<div class='muted'>No completed quiz sets yet.</div>"}
+function openConcept(i){const a=account(),topic=SUBJECTS[a.subject].road[i];selectedLearningTopic=topic;a.learningTopic=topic;save(a);const c=topicContent(topic,a.subject),mins=topicDuration(topic);document.getElementById("conceptTitle").textContent=topic;document.getElementById("conceptMeta").textContent=`${mins} min focus · ${a.subject}`;document.getElementById("conceptBody").innerHTML=`<div class="card"><h3>What is it?</h3><p>${esc(c.def)}</p><h3>How to use it</h3><p>${esc(c.how)}</p><h3>Example</h3><pre class="code-output">${esc(c.example)}</pre><h3>Key equation / pattern</h3><pre class="code-output">${esc(c.equation)}</pre><h3>Practice task</h3><p>${esc(c.practice)}</p></div>`;resetTopicTimer();document.getElementById("conceptModal").classList.add("show")}
+function closeConcept(){pauseTopicTimer();document.getElementById("conceptModal").classList.remove("show")}
+function resetTopicTimer(){pauseTopicTimer();const a=account(),mins=topicDuration(selectedLearningTopic||a.learningTopic||SUBJECTS[a.subject].road[0]);topicTimerRemaining=mins*60;document.getElementById("topicTimer").textContent=`${mins}:00`;document.getElementById("topicTimerBar").style.width="0%"}
+function startTopicTimer(){if(topicTimerRemaining<=0)resetTopicTimer();topicTimerEnd=Date.now()+topicTimerRemaining*1000;clearInterval(topicTimerId);topicTimerId=setInterval(()=>{topicTimerRemaining=Math.max(0,Math.ceil((topicTimerEnd-Date.now())/1000));const a=account(),mins=topicDuration(selectedLearningTopic||a.learningTopic);document.getElementById("topicTimer").textContent=`${Math.floor(topicTimerRemaining/60)}:${String(topicTimerRemaining%60).padStart(2,"0")}`;document.getElementById("topicTimerBar").style.width=Math.max(0,Math.min(100,(1-topicTimerRemaining/(mins*60))*100))+"%";if(topicTimerRemaining<=0){pauseTopicTimer();toast("Focus timer complete. Review the practice task and mark the topic complete.")}},1000);toast("Focus timer started")}
+function pauseTopicTimer(){if(topicTimerId){topicTimerRemaining=Math.max(0,Math.ceil((topicTimerEnd-Date.now())/1000));clearInterval(topicTimerId);topicTimerId=null}}
+function completeTopic(){const a=account();const topic=selectedLearningTopic||a.learningTopic;if(!topic)return;a.completedTopics=a.completedTopics||[];if(!a.completedTopics.includes(topic))a.completedTopics.push(topic);a.weeklyMinutes=(a.weeklyMinutes||0)+Math.max(1,Math.round((topicDuration(topic)*60-topicTimerRemaining)/60));save(a);renderAll();toast(topic+" completed");closeConcept()}
+function practiceTopic(page){const a=account();a.learningTopic=selectedLearningTopic||a.learningTopic||SUBJECTS[a.subject].road[0];save(a);closeConcept();show(page)}
+
+function viewSubmission(i){const x=account().submissions[i];document.getElementById("submissionDetails").innerHTML=`<b>${esc(x.title)}</b><p class="muted">${x.language} · ${x.topic} · ${x.date}</p><pre class="code-output">${esc(x.code)}</pre>`}
+function viewQuizHistory(i){const x=account().quizHistory[i];document.getElementById("submissionDetails").innerHTML=`<b>${esc(x.subject)} — Quiz Set ${x.set}</b><p class="muted">Score ${x.score}/10 · ${x.date}</p>${x.answers.map((r,j)=>`<div class="mini" style="margin:7px 0"><b>${j+1}. ${esc(r.question)}</b><p style="margin:4px 0">Your answer: ${esc(r.answer||"Not answered")}</p><p style="margin:4px 0">Correct: ${esc(r.correct)}</p><p class="muted" style="margin:4px 0">${esc(r.explanation)}</p></div>`).join("")}`}
+
+function topicQuizBank(subject,topic){const c=canonicalTopic(topic),lang=subject.replace(" Programming","");const mk=(q,o,ans,e)=>[q,o,ans,e];const sets={
+"Variables & input":[mk(`In ${lang}, what is the main purpose of a variable?`,["Store a value","Repeat a loop","Create a comment","Compile the program"],0,"A variable stores data that the program can use."),mk("Which expression calculates the sum of two values a and b?",["a+b","a-b","a*b","a/b"],0,"Addition uses the + operator."),mk("If x = 10 and y = 5, what is x + y?",["15","5","50","2"],0,"10 + 5 = 15."),mk("Which step normally comes after reading user input?",["Validate or convert it","Delete it","Compile the keyboard","Restart the program"],0,"Input often needs validation or type conversion."),mk("Which equation gives the average of three values?",["(a+b+c)/3","a+b+c*3","(a-b-c)/3","a*b*c"],0,"Average is total divided by count."),mk("What should you do before dividing by a user-provided number?",["Check that it is not zero","Always multiply it","Ignore it","Convert it to a loop"],0,"A zero divisor causes a division error."),mk("If price = 100 and tax = 10, which gives the final price when tax is a fixed amount?",["price+tax","price-tax","price*tax","price/tax"],0,"The final amount is 100 + 10 = 110."),mk("What does input validation mean?",["Checking that input is acceptable","Printing input twice","Deleting variables","Skipping user input"],0,"Validation checks whether data meets expected rules."),mk("Which equation calculates rectangle area?",["length × width","length + width","2 × length","length ÷ width"],0,"Area of a rectangle is length multiplied by width."),mk("A good beginner program should separate input, processing and what?",["Output","Password","Compiler","Keyboard"],0,"The common flow is Input → Processing → Output.")],
+"Loops & conditions":[mk("What does a loop do?",["Repeats instructions","Deletes variables","Creates hardware","Only prints errors"],0,"Loops repeat a block of instructions."),mk("Which condition means x is greater than 10?",["x > 10","x < 10","x == 10","x != 10"],0,"The > operator means greater than."),mk("What is the sum from 1 to n?",["n(n+1)/2","n/2","n(n-1)","2n+1"],0,"The arithmetic-series formula is n(n+1)/2."),mk("Which loop is useful when the number of repetitions is known?",["for","if","switch","class"],0,"A for loop is commonly used for counted repetition."),mk("What does an if statement do?",["Chooses whether code runs","Always repeats code","Creates an array","Reads a file automatically"],0,"A condition controls whether a block executes."),mk("How many even numbers are there from 1 to 20?",["10","5","20","11"],0,"The even numbers are 2 through 20: 10 values."),mk("Which operator means logical AND in most C-like languages?",["&&","||","!","%"],0,"&& requires both conditions to be true."),mk("What happens when a while condition becomes false?",["The loop stops","The program always crashes","The loop doubles","The condition becomes true"],0,"A while loop continues only while its condition is true."),mk("What is a nested loop?",["A loop inside another loop","A loop with no condition","A loop after a function","A deleted loop"],0,"Nested loops are often used for grids and patterns."),mk("Which pattern is best for printing rows and columns?",["Nested loops","One variable only","A comment","A class name"],0,"One loop can control rows and another columns.")],
+"Functions":[mk("Why use a function?",["Reuse a block of logic","Increase file size","Avoid all variables","Stop compilation"],0,"Functions make logic reusable and easier to test."),mk("What is a parameter?",["An input defined by a function","A compiler error","A loop counter only","A file"],0,"Parameters receive values passed into a function."),mk("What does return do?",["Sends a result back","Starts a loop","Deletes a class","Reads the keyboard"],0,"return sends a value/control back to the caller."),mk("What is f(2) for f(x)=x²+1?",["5","3","4","6"],0,"2² + 1 = 5."),mk("Which is a good function name for adding two numbers?",["add","thing","doit123","temp"],0,"Meaningful names improve readability."),mk("A function that calls itself is called what?",["Recursive","Nested only","Static only","Compiled"],0,"A recursive function calls itself with a smaller/subproblem input."),mk("What is a return type?",["The type of value a function gives back","The input variable name","The loop count","The file name"],0,"The return type describes the result produced by a function."),mk("What is the main benefit of small functions?",["Easier testing and reuse","More syntax errors","Less readability","No parameters allowed"],0,"Small functions are easier to understand and test."),mk("If add(a,b) returns a+b, what is add(4,6)?",["10","24","2","46"],0,"4 + 6 = 10."),mk("What should a function generally do well?",["One clear responsibility","Everything in the application","Only print text","Never accept input"],0,"Focused functions are easier to maintain.")],
+"Arrays & strings":[mk("What does an array/list store?",["Multiple values","Only one comment","Only errors","A compiler"],0,"Arrays/lists store collections of values."),mk("What is usually the first index?",["0","1","-1","10"],0,"Most mainstream programming languages use zero-based indexing."),mk("If a=[10,20,30], what is a[0]?",["10","20","30","0"],0,"Index 0 refers to the first element."),mk("How do you calculate the sum of n array values?",["Add each value","Multiply only the first","Divide by n always","Ignore the values"],0,"A loop can accumulate each value into a sum."),mk("What is a string?",["A sequence of characters","Only an integer","A loop","A pointer always"],0,"Strings represent text."),mk("Which task finds the largest element?",["Track a current maximum","Always sort first","Count characters only","Use input twice"],0,"Keep the largest seen value while scanning the collection."),mk("What is the length of [2,4,6,8]?",["4","3","8","2"],0,"There are four elements."),mk("What is a common way to process every array element?",["Loop through it","Delete it","Compile it","Rename it"],0,"Iteration lets you process each element."),mk("For the string 'cat', how many characters are there?",["3","2","4","0"],0,"c, a and t are three characters."),mk("What is the sum of a1 through an?",["a1+a2+...+an","a1×an","n/2","a1-an"],0,"The sum is the addition of all n terms.")],
+"OOP":[mk("What is a class?",["A blueprint for objects","A loop","A variable only","A compiler"],0,"A class describes data and behavior for objects."),mk("What is an object?",["An instance of a class","A comment","A loop condition","A file extension"],0,"An object is created from a class definition."),mk("Which concept hides internal implementation details?",["Encapsulation","Iteration","Compilation","Parsing"],0,"Encapsulation groups data and methods and controls access."),mk("What is inheritance?",["Creating a class from another class","Repeating a loop","Reading input","Sorting values"],0,"Inheritance allows a derived class to reuse/extend a base class."),mk("What is polymorphism?",["Different implementations behind a common interface","Only private data","A loop","A variable type"],0,"Polymorphism lets one interface represent different implementations."),mk("State + behavior is a useful model for what?",["An object","A compiler","A loop","An equation"],0,"Objects combine data/state and behavior/methods."),mk("Why use constructors?",["Initialize objects","Delete objects only","Run loops","Compile code"],0,"Constructors initialize an object when it is created."),mk("Which is an example of a method?",["student.study()","student = 10","if student","class only"],0,"study() is behavior associated with the object."),mk("What does access control help with?",["Protecting object data","Increasing loop count","Changing syntax","Printing errors"],0,"Access modifiers control how code can use members."),mk("A class with private data and public methods demonstrates what?",["Encapsulation","Sorting","Recursion","Input"],0,"Private data with controlled methods is encapsulation.")],
+"Pointers":[mk("What does a pointer store?",["A memory address","Only text","A loop count","A class name"],0,"A pointer stores the address of another object/value."),mk("Which operator gets an address in C/C++?",["&","*","#","%"],0,"& is the address-of operator."),mk("Which operator dereferences a pointer?",["*","&","-> only","%"],0,"* accesses the value at the pointed address."),mk("If x=10 and p=&x, what is *p?",["10","Address only","0","100"],0,"Dereferencing p gives x's value."),mk("What is a NULL/null pointer used to represent?",["No valid target","A large integer","A loop","A class"],0,"Null indicates that the pointer does not point to a valid object."),mk("Why are pointers useful?",["Direct memory manipulation","Only printing strings","Replacing all loops","Creating comments"],0,"Pointers support memory-efficient and low-level operations."),mk("What does p=&x mean?",["p receives x's address","p receives x+1","x receives p","p is deleted"],0,"The address-of operator gives the location of x."),mk("What happens when *p=20 and p points to x?",["x becomes 20","p becomes 20 bytes","x is deleted","Nothing"],0,"Dereferencing allows the pointed value to be changed."),mk("Which language pair commonly uses explicit pointers?",["C/C++","HTML/CSS","SQL/JSON","Markdown"],0,"C and C++ provide explicit pointer operations."),mk("A pointer should normally be checked before dereferencing to avoid what?",["Invalid memory access","A syntax comment","A loop","A function definition"],0,"Invalid/null pointers can cause crashes or undefined behavior.")],
+"DOM & APIs":[mk("What does DOM stand for?",["Document Object Model","Data Object Memory","Digital Output Map","Document Order Mode"],0,"The DOM represents a document as objects."),mk("Which object commonly represents the web page in JavaScript?",["document","windowonly","page","htmlonly"],0,"document provides access to the page DOM."),mk("What does an API provide?",["A way for software to communicate","Only CSS styles","A compiler","A keyboard"],0,"APIs expose functions/data for other software to use."),mk("What is a common flow for a web API call?",["Request → response","Response → delete","Compile → print only","CSS → keyboard"],0,"A client sends a request and receives a response."),mk("Which API is commonly used to request web data in JavaScript?",["fetch","print","input","compile"],0,"fetch sends HTTP requests."),mk("What does getElementById do?",["Finds an element by id","Creates a database","Compiles JS","Starts a loop"],0,"It returns the DOM element with the specified id."),mk("What should a UI do after receiving API data?",["Update the relevant view","Delete the response","Restart the browser","Compile HTML"],0,"The response can be rendered into the UI."),mk("What does JSON commonly represent?",["Structured data","Only CSS","Machine code","An image format only"],0,"JSON is a common data interchange format."),mk("What is an event listener used for?",["Reacting to user/browser events","Compiling code","Storing passwords","Sorting arrays"],0,"Listeners run code when an event occurs."),mk("A button click changing a heading is mainly a what?",["DOM interaction","Compiler operation","Database join","Pointer operation"],0,"The click handler changes a DOM element.")],
+"Projects":[mk("What should you define before coding a project?",["Requirements","Only colors","Only variable names","Nothing"],0,"Clear requirements define what the project must do."),mk("What is a good development flow?",["Plan → build → test → improve","Build everything at once","Test only after release","Skip requirements"],0,"Iterative development reduces mistakes."),mk("Why validate user input?",["To handle invalid data safely","To make code longer","To remove all functions","To avoid testing"],0,"Validation protects program behavior and user experience."),mk("What is debugging?",["Finding and fixing problems","Designing a logo only","Deleting code","Writing comments only"],0,"Debugging identifies causes of incorrect behavior."),mk("What is a test case?",["Input and expected behavior/result","A class name","A color","A compiler"],0,"Test cases check whether software behaves as expected."),mk("Why use version control?",["Track code changes","Run hardware","Replace testing","Create passwords"],0,"Version control records changes and supports collaboration."),mk("What makes a project portfolio-ready?",["Working features + documentation + demo","Only a title","Only screenshots","No code"],0,"A demonstrable, documented project is easier to evaluate."),mk("What is an MVP?",["Minimum viable product","Maximum variable pointer","Main version program","Memory validation process"],0,"An MVP contains the smallest useful set of features."),mk("Why split a large project into modules?",["To make it easier to build and maintain","To remove all testing","To increase bugs","To avoid reuse"],0,"Modules separate responsibilities."),mk("What should happen after a project works once?",["Test edge cases and improve it","Stop immediately","Delete the code","Never document it"],0,"Edge-case testing improves reliability.")]};return sets[c]||sets["Variables & input"]}
+function startQuiz(){const a=account(),topic=a.learningTopic||SUBJECTS[a.subject].road[0],signature=a.subject+"|"+topic;if(quizSet.length!==10||quizSet[0]?.signature!==signature){const all=topicQuizBank(a.subject,topic),solved=new Set(a.quizSolved||[]),pool=all.map((x,i)=>({x,i})).filter(o=>!solved.has(a.subject+"|"+topic+"|"+o.i));const chosen=(pool.length>=10?pool:all.map((x,i)=>({x,i}))).slice(0,10);quizSet=chosen.map(o=>({subject:a.subject,signature,index:o.i,q:o.x}));quizIndex=0;quizAnswers={};quizSubmitted=false}renderQuizUI()}
+function renderQuizUI(){const a=account();if(!a)return;document.getElementById("quizSubjectText").textContent=`10 questions from ${a.subject}, focused on ${a.learningTopic||SUBJECTS[a.subject].road[0]}. Submit each answer, then complete the full set.`;if(!quizSet.length){startQuiz();return}const item=quizSet[quizIndex];if(!item)return;const x=item.q;document.getElementById("quizCounter").textContent=`Question ${quizIndex+1} of 10`;document.getElementById("quizTopic").textContent=a.learningTopic||SUBJECTS[a.subject].road[0];document.getElementById("quizQuestion").textContent=x[0];document.getElementById("quizOptions").innerHTML=x[1].map((o,i)=>`<button class="quiz-opt ${quizAnswers[quizIndex]===i?"selected":""}" onclick="selectQuiz(${i})">${String.fromCharCode(65+i)}. ${esc(o)}</button>`).join("");const chosen=quizAnswers[quizIndex];const exp=document.getElementById("quizExplanation");exp.classList.toggle("hidden",chosen===undefined);if(chosen!==undefined){const correct=x[2];exp.innerHTML=chosen===correct?`<b>Correct.</b> ${esc(x[3])}`:`<b>Wrong.</b> Correct answer: ${esc(x[1][correct])}. ${esc(x[3])}`}document.getElementById("quizFinal").classList.toggle("hidden",!quizSubmitted);const complete=quizSet.length===10&&quizSet.every((_,i)=>quizAnswers[i]!==undefined);const finish=document.getElementById("submitQuizBtn");finish.style.display=quizSubmitted?"none":"block";finish.disabled=!complete;finish.textContent=complete?"Submit complete quiz set":"Answer all 10 questions to submit"}
+function selectQuiz(i){quizAnswers[quizIndex]=i;document.querySelectorAll(".quiz-opt").forEach((b,j)=>b.classList.toggle("selected",j===i))}
+function quizSubmit(){if(quizAnswers[quizIndex]===undefined){toast("Choose an answer first");return}const x=quizSet[quizIndex].q;const correct=x[2],chosen=quizAnswers[quizIndex];const e=document.getElementById("quizExplanation");e.classList.remove("hidden");e.innerHTML=chosen===correct?`<b>Correct.</b> ${esc(x[3])}`:`<b>Wrong.</b> Correct answer: ${esc(x[1][correct])}. ${esc(x[3])}`;if(quizIndex===9){document.getElementById("submitQuizBtn").style.display="block"}}
+function quizNext(){if(quizIndex<9){quizIndex++;renderQuizUI()}else{toast("This is the last question. Submit your answer first.")}}
+function quizPrev(){if(quizIndex>0){quizIndex--;renderQuizUI()}}
+function finishQuiz(){if(quizSet.length!==10||quizSet.some((_,i)=>quizAnswers[i]===undefined)){toast("Answer all 10 questions before submitting the quiz");return}const a=account();let score=0,answers=[];quizSet.forEach((it,i)=>{const ch=quizAnswers[i],x=it.q;if(ch===x[2])score++;answers.push({question:x[0],answer:x[1][ch],correct:x[1][x[2]],explanation:x[3]});a.quizSolved=a.quizSolved||[];if(!a.quizSolved.includes(a.subject+"|"+it.signature.split("|")[1]+"|"+it.index))a.quizSolved.push(a.subject+"|"+it.signature.split("|")[1]+"|"+it.index)});a.quizHistory=a.quizHistory||[];a.quizHistory.unshift({subject:a.subject,topic:a.learningTopic||SUBJECTS[a.subject].road[0],set:a.quizHistory.length+1,score,date:today(),answers});save(a);quizSubmitted=true;document.getElementById("quizFinal").classList.remove("hidden");document.getElementById("quizFinal").innerHTML=`<div class="score">${score}/10</div><p>Quiz set saved. You can review every question and solution from My Learning.</p><button class="btn secondary" onclick="newQuizSet()">Start another set</button>`;renderLearning();renderDashboard();renderQuizUI()}
+function newQuizSet(){quizSet=[];quizIndex=0;quizAnswers={};quizSubmitted=false;startQuiz()}
+
+function renderCareer(){const a=account(),roles=ROLES[a.subject]||ROLES["Python Programming"];document.getElementById("role").innerHTML=roles.map(r=>`<option ${r===a.role?"selected":""}>${r}</option>`).join("");document.getElementById("careerTitle").textContent=`${a.subject} career coach`;document.getElementById("careerIntro").textContent=`Your career recommendations are aligned with ${a.subject}.`;document.getElementById("careerResult").innerHTML=`<p>Your current target is <b>${esc(a.role)}</b>.</p><ol>${(ROLE_ROADS[a.role]||[]).map(x=>`<li style="margin:8px 0">${x}</li>`).join("")}</ol>`}
+function careerPlan(){const a=account(),role=document.getElementById("role").value; a.role=role;save(a);document.getElementById("careerResult").innerHTML=`<p>Roadmap for <b>${esc(role)}</b>:</p><ol>${(ROLE_ROADS[role]||[]).map(x=>`<li style="margin:8px 0">${x}</li>`).join("")}</ol><p class="muted">Build one project after the core skills instead of collecting only certificates.</p>`;toast("Career roadmap updated")}
+
+function renderUpdates(){const a=account(),s=a.subject;const maps={
+"Python Programming":[["Python jobs","Python Developer, Backend, Data and AI roles use this foundation."],["Learn next","OOP, APIs, SQL, Pandas, testing and one deployable project."],["Opportunity signal","Python connects naturally to AI/ML, automation, backend and data careers."]],
+"C++ Programming":[["C++ jobs","C++ Developer, Systems, Embedded, Game and Software roles."],["Learn next","OOP, STL, DSA, memory, pointers, concurrency and projects."],["Opportunity signal","C++ is especially useful for systems, performance-heavy software and competitive programming."]],
+"Java Programming":[["Java jobs","Java Developer, Backend, Android and Software Engineer roles."],["Learn next","OOP, Collections, Spring Boot, SQL, REST APIs and deployment."],["Opportunity signal","Java remains a major backend and enterprise development path."]],
+"C Programming":[["C jobs","Embedded, Firmware, Systems and low-level software roles."],["Learn next","Pointers, memory, data structures, microcontrollers and debugging."],["Opportunity signal","C is a strong foundation for embedded and systems engineering."]],
+"C# Programming":[["C# jobs",".NET, backend, game development and software engineering roles."],["Learn next","OOP, .NET, ASP.NET Core, SQL, APIs and deployment."],["Opportunity signal","C# is strong for Microsoft/.NET ecosystems and game development."]],
+"JavaScript Programming":[["JavaScript jobs","Frontend, Full Stack, Node.js and Web Developer roles."],["Learn next","DOM, React, Node.js, APIs, databases and deployment."],["Opportunity signal","JavaScript spans browser, backend and full-stack product development."]]};
+const cards=maps[s];document.getElementById("updatesIntro").textContent=`Current learning signals for ${s}.`;document.getElementById("marketGrid").innerHTML=cards.map(c=>`<div class="market-card"><span class="muted">AI UPDATE</span><b>${c[0]}</b><div class="big">${s}</div><p>${c[1]}</p></div>`).join("");document.getElementById("updateFeed").innerHTML=SUBJECTS[s].road.map((x,i)=>`<div class="update mini" style="margin:8px 0"><b>${x}</b><p class="muted" style="margin:4px 0">Recommended stage ${i+1} for ${s}. Pair this with one practical coding task and one project.</p></div>`).join("")}
+
+function mentorReply(text){const a=account(),s=a.subject,t=text.toLowerCase();
+ if(/^(hi|hello|hey|hii|good morning|good evening)\b/.test(t))return`Hi ${a.name}! I’m ready to help with ${s}. Ask me anything — I’ll explain it step by step and include a simple example.`;
+ if(/how are you|what are you doing|thank|thanks/.test(t))return`I’m doing well and I’m here with you. If you’re studying ${s}, send me the topic or question and I’ll help you work through it.`;
+ if(/function|method/.test(t))return`${s} functions/methods are reusable blocks of code. Example: define a function that receives two numbers and returns their sum. In ${s}, the key ideas are parameters, return values and calling the function. Try: create a function that returns the square of a number. I can also walk through each line.`;
+ if(/loop|for|while/.test(t))return`A loop repeats a block of code. Example: a for loop can print 1 to 5; a while loop keeps running while a condition is true. For example, start with i=1, print i, then increment i until i<=5. Common exam mistake: forgetting to update the loop variable, which can create an infinite loop. I can give you an easy → medium → hard practice set.`;
+ if(/error|bug|wrong|not work/.test(t))return`Let’s debug it systematically. 1) Read the exact error line. 2) Check the variable/type/syntax mentioned there. 3) Compare the actual and expected output. Send your complete ${s} code and the exact error. I’ll explain the cause, show the corrected code, and explain why the fix works.`;
+ if(/array|list|string|pointer|class|object|oop|recursion|sorting/.test(t))return`Let’s learn this with a small example first, then increase difficulty. For ${s}, I’ll explain the idea, show a short example, trace it step by step, point out common exam mistakes, and finish with one practice question. Tell me the exact topic you want.`;
+ if(/career|job|role/.test(t))return`For ${s}, your current target is ${a.role}. I can map the role into skills → projects → interview topics → practice. Tell me whether you want a 30-day, 60-day or exam-focused plan.`;
+ if(/quiz|\bexam\b|test/.test(t))return`I can prepare you with a 10-question set. For each answer, I’ll explain why it is correct, show a small example when useful, and point out the common trap.`;
+ if(/project/.test(t))return`For a ${s} project, start with a small real problem, then add input handling, core logic, functions/classes, error handling and testing. Tell me your level and I’ll suggest three projects with features and implementation steps.`;
+ return`Good question. For ${s}, I’ll answer it in this order: simple explanation → small example → step-by-step walkthrough → common mistake → practice question. Your question is: “${esc(text)}”. If you share the exact topic, I’ll make the explanation specific.`}
+function renderMentor(){const a=account();document.getElementById("mentorSubject").textContent=a.subject;const box=document.getElementById("mentorChat");box.innerHTML=`<div class="msg"><div class="who">Nova</div>I am your ${esc(a.subject)} mentor. Ask a specific question and I will respond with an explanation, example and practice direction.</div>`}
+async function sendMentor(){
+ const input=document.getElementById("mentorInput"),text=input.value.trim(),a=account();if(!text)return;
+ const box=document.getElementById("mentorChat");box.innerHTML+=`<div class="msg user"><div class="who">You</div>${esc(text)}</div>`;input.value="";
+ let reply=mentorReply(text);
+ try{const r=await fetch("http://127.0.0.1:8000/api/agent",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({subject:a.subject,role:a.role,agent:"subject",language:a.language,message:text})});if(r.ok){const d=await r.json();if(d.ok&&d.reply)reply=d.reply}}catch(e){}
+ box.innerHTML+=`<div class="msg"><div class="who">Nova</div>${esc(reply)}</div>`;box.scrollTop=box.scrollHeight;
+}
+
+function selectAgent(id){activeAgent=id;renderAgents();renderAgentChat()}
+function renderAgents(){document.getElementById("agentList").innerHTML=Object.entries(AGENTS).map(([id,v])=>`<button class="agent-item ${id===activeAgent?"active":""}" onclick="selectAgent('${id}')"><span class="agent-icon">${id.slice(0,2).toUpperCase()}</span><span><b>${v[0]}</b><small>${v[1]}</small></span></button>`).join("");renderAgentChat()}
+function personalFallback(text){
+ const a=account();
+ const t=text.toLowerCase().trim();
+ const name=a?.name || "friend";
+
+ const history=(a?.agentChats?.personal)||[];
+ const previous=history
+   .filter(x=>x.role==="assistant")
+   .slice(-1)[0]?.text || "";
+
+ const recentUser=history
+   .filter(x=>x.role==="user")
+   .slice(-4)
+   .map(x=>x.text)
+   .join(" ")
+   .toLowerCase();
+
+ const pick=(arr)=>{
+   const usable=arr.filter(x=>x!==previous);
+   return usable[Math.floor(Math.random()*usable.length)] || arr[0];
+ };
+
+ /* ---------- GREETINGS ---------- */
+ if(/^(hi|hii|hello|hey|heyy|yo|good morning|good afternoon|good evening|good night)\b/.test(t)){
+   return pick([
+     `Hey ${name}! 👋 How are you doing?`,
+     `Hey ${name}! Good to see you. What's going on?`,
+     `Hi ${name}! 😄 What's on your mind?`
+   ]);
+ }
+
+ /* ---------- CASUAL CONVERSATION ---------- */
+ if(/what are you doing|what r u doing|whatcha doing/.test(t)){
+   return pick([
+     `I'm here talking with you, ${name}. 😄 What are you doing?`,
+     `Just here with you. Tell me what's going on.`,
+     `I'm ready to chat with you. What's happening?`
+   ]);
+ }
+
+ if(/how are you|how r u|how're you/.test(t)){
+   return pick([
+     `I'm doing good in my AI way 😄. How are you?`,
+     `I'm here and ready to listen. How are you feeling today?`,
+     `I'm good! More importantly, how are you doing?`
+   ]);
+ }
+
+ /* ---------- FOOD / THINNAVA ---------- */
+ if(/thinnava|thinnava|tinnava|tinava|tinnava|did you eat|have you eaten|eat food|food|lunch|dinner|breakfast/.test(t)){
+   return pick([
+     `Nenu AI kabatti nenu tinanu 😄. Nuvvu thinnava?`,
+     `I don't eat because I'm an AI 😄. But did you eat?`,
+     `Haha, nenu tinanu 😄. Nuvvu food thinnava?`
+   ]);
+ }
+
+ /* ---------- SLEEP ---------- */
+ if(/sleep|slept|sleeping|nidra|padukunna|rest/.test(t)){
+   return pick([
+     `I don't sleep because I'm an AI 😄. Nuvvu proper ga sleep chestunnava?`,
+     `I don't need sleep, but you definitely do 😄. Did you rest well?`,
+     `Nenu sleep cheyyanu 😄. Nuvvu enough rest teesukunnava?`
+   ]);
+ }
+
+ /* ---------- TIRED ---------- */
+ if(/i'?m tired|im tired|feeling tired|very tired|so tired|exhausted/.test(t)){
+   return pick([
+     `Sounds like you're really tired. Take a small break and don't push yourself too hard.`,
+     `You sound exhausted. Get some water, relax for a few minutes, then decide what you want to do.`,
+     `It's okay to slow down when you're tired. What made today so tiring?`
+   ]);
+ }
+
+ /* ---------- BORED ---------- */
+ if(/i'?m bored|im bored|so bored|feeling bored|bored today/.test(t)){
+   return pick([
+     `Bored ah? 😄 Let's do something interesting. Want to chat, play a small game, or work on something?`,
+     `Let's fix that boredom 😄. Tell me what mood you're in.`,
+     `Okay, no boring conversation today 😄. What's happening?`
+   ]);
+ }
+
+ /* ---------- SAD ---------- */
+ if(/i'?m sad|im sad|feeling sad|sad today|upset|not feeling good/.test(t)){
+   return pick([
+     `I'm sorry you're feeling like that. I'm here — you can tell me what happened.`,
+     `It's okay to have a bad day. If you want, tell me what's bothering you.`,
+     `I'm listening. You don't have to explain everything perfectly.`
+   ]);
+ }
+
+ /* ---------- STRESS ---------- */
+ if(/stressed|stress|anxious|anxiety|worried|tension|pressure/.test(t)){
+   return pick([
+     `That sounds stressful. Take a breath first. What's causing the most pressure right now?`,
+     `I get it. Let's take it one thing at a time. What is stressing you the most?`,
+     `Don't try to solve everything at once. Tell me the biggest problem right now.`
+   ]);
+ }
+
+ /* ---------- HAPPY / EXCITED ---------- */
+ if(/i'?m happy|im happy|feeling happy|excited|great news|good news/.test(t)){
+   return pick([
+     `That's great! 😄 What happened?`,
+     `Nice! I'm happy for you. Tell me what happened!`,
+     `That's what I like to hear 😄. What made you happy?`
+   ]);
+ }
+
+ /* ---------- ANGRY / FRUSTRATED ---------- */
+ if(/i'?m angry|im angry|angry|frustrated|frustrating|annoyed|irritated/.test(t)){
+   return pick([
+     `Sounds like something really annoyed you. What happened?`,
+     `I get it. Tell me what happened — I'm listening.`,
+     `Take a moment before reacting. If you want, tell me what made you angry.`
+   ]);
+ }
+
+ /* ---------- COLLEGE ---------- */
+ if(/college|clg|campus|hostel|class|lecture|teacher|professor/.test(t)){
+   return pick([
+     `How was college today?`,
+     `Sounds like something happened at college. Tell me about it.`,
+     `How are things going at college?`
+   ]);
+ }
+
+ /* ---------- EXAM / DEADLINE ---------- */
+ if(/exam|test|mid|ca1|ca2|assignment|deadline|submission/.test(t)){
+   return pick([
+     `Got it. Is the exam or deadline stressing you out?`,
+     `Okay. Tell me what's coming up and we'll figure it out.`,
+     `I can help with that. What's the exact exam or submission?`
+   ]);
+ }
+
+ /* ---------- FRIENDS / RELATIONSHIPS ---------- */
+ if(/friend|friends|bestie|missing someone|miss him|miss her|relationship/.test(t)){
+   return pick([
+     `Sounds like someone is on your mind. What happened?`,
+     `Tell me about it. I'm listening.`,
+     `Yeah, relationships and friendships can get complicated. What happened?`
+   ]);
+ }
+
+ /* ---------- STUDY ---------- */
+ if(/study|studying|learn|learning|topic|subject/.test(t)){
+   return pick([
+     `Sure. What are you studying right now?`,
+     `I can help you with that. Tell me the topic.`,
+     `Okay, let's work on it. What exactly are you trying to learn?`
+   ]);
+ }
+
+ /* ---------- CAREER ---------- */
+ if(/career|job|internship|placement|resume|future|career goal/.test(t)){
+   return pick([
+     `Sure, we can talk about your career. What are you thinking about?`,
+     `Let's figure it out together. What career are you interested in?`,
+     `Tell me what you're planning for your career.`
+   ]);
+ }
+
+ /* ---------- THANKS ---------- */
+ if(/^(thanks|thank you|thx|thankyou)\b/.test(t)){
+   return pick([
+     `Anytime, ${name}. 😊`,
+     `You're welcome!`,
+     `Of course. I'm here whenever you need me.`
+   ]);
+ }
+
+ /* ---------- GOODBYE ---------- */
+ if(/^(bye|goodbye|see you|see ya|gn|good night)\b/.test(t)){
+   return pick([
+     `Bye ${name}! Take care. 👋`,
+     `See you later!`,
+     `Good night! Rest well.`
+   ]);
+ }
+
+ /* ---------- CONTEXT FOLLOW-UP ---------- */
+ if(
+   recentUser &&
+   /^(why|how|then|also|but|and|what|really|okay|ok|yes|no)\b/.test(t)
+ ){
+   return pick([
+     `I'm following you. Tell me what happened next.`,
+     `Got you. Continue — I'm listening.`,
+     `Okay, I understand. What happened after that?`
+   ]);
+ }
+
+ /* ---------- GENERAL CASUAL MESSAGE ---------- */
+ return pick([
+   `I'm listening, ${name}. Tell me what's on your mind.`,
+   `Got you. What do you want to talk about?`,
+   `Okay, I'm with you. Tell me a little more.`,
+   `I understand. What happened?`,
+   `Sure. Tell me more about it.`
+ ]);
+}
+function agentResponse(text){
+ const a=account(),s=a.subject,t=text.toLowerCase(),history=(a.agentChats&&a.agentChats[activeAgent])||[];
+ if(activeAgent==='personal')return personalFallback(text);
+ if(activeAgent==='subject')return `Subject Mentor (${s}): ${mentorReply(text)}`;
+ if(activeAgent==='debug'){
+   if(/error|bug|wrong|not work|fails|exception/.test(t)) return `Code Debugger: I can help. Paste the code and the exact error/output. I’ll identify the failing line, explain why it fails, give the corrected version, and show a small test case.`;
+   return `Code Debugger: Send the code you are working on and tell me the expected output. I’ll check syntax, logic, edge cases and time complexity.`;
+ }
+ if(activeAgent==='career')return `Career Mentor: Your current target is ${a.role}. Tell me whether you want jobs, skills, projects, resume, or interview preparation and I’ll focus only on that.`;
+ return `Study Coach: Tell me the exact topic, exam date or time available. I’ll turn it into a short revision plan with examples and practice questions.`;
+}
+function renderAgentChat(){const a=account();if(!a)return;document.getElementById("agentTitle").textContent=AGENTS[activeAgent][0];document.getElementById("agentSubtitle").textContent=AGENTS[activeAgent][1];a.agentChats=a.agentChats||{};a.agentChats[activeAgent]=a.agentChats[activeAgent]||[];const box=document.getElementById("agentChat");if(!a.agentChats[activeAgent].length){box.innerHTML=`<div class="msg"><div class="who">${AGENTS[activeAgent][0]}</div>I am ready. I am currently aligned to ${esc(a.subject)}. Ask a specific question and I will respond differently based on what you ask.</div>`}else box.innerHTML=a.agentChats[activeAgent].map(m=>`<div class="msg ${m.role==="user"?"user":""}"><div class="who">${m.role==="user"?"You":AGENTS[activeAgent][0]}</div>${esc(m.text)}</div>`).join("");box.scrollTop=box.scrollHeight}
+async function smartAgentResponse(text){
+
+ const a=account();
+
+ /*
+  PERSONAL MENTOR:
+  Handle normal casual conversation locally first.
+  This prevents messages like "thinnava" or
+  "what are you doing" from becoming Python questions.
+ */
+
+ if(activeAgent==="personal"){
+
+   const t=text.toLowerCase().trim();
+
+   const casualPatterns=[
+     /^(hi|hii|hello|hey|heyy|yo)\b/,
+     /how are you|how r u|how're you/,
+     /what are you doing|what r u doing/,
+     /thinnava|tinnava|tinava|tinnava/,
+     /did you eat|have you eaten/,
+     /sleep|slept|sleeping|nidra/,
+     /i'?m tired|im tired|exhausted/,
+     /i'?m bored|im bored|bored/,
+     /i'?m sad|im sad|feeling sad/,
+     /stressed|stress|anxious|worried/,
+     /i'?m happy|im happy|excited/,
+     /angry|frustrated|annoyed|irritated/,
+     /friend|friends|bestie|missing someone/,
+     /college|clg|campus|hostel/,
+     /class|lecture|teacher|professor/,
+     /bye|goodbye|see you/,
+     /thanks|thank you|thx/
+   ];
+
+   if(casualPatterns.some(pattern=>pattern.test(t))){
+     return personalFallback(text);
+   }
+ }
+
+ /*
+  For genuine questions, use the local Ollama AI.
+ */
+
+ try{
+
+   const history=
+     (a.agentChats &&
+      a.agentChats[activeAgent] || [])
+      .slice(-8);
+
+   const personalRules=
+     activeAgent==="personal"
+     ? `
+You are the Personal Mentor.
+
+IMPORTANT:
+- Respond to the user's actual message first.
+- Do NOT automatically talk about Python, coding, exams or studying.
+- Casual conversation should stay casual.
+- Understand short English messages, Telugu-English transliteration, slang and typos.
+- If the user is sad, tired, angry, stressed or worried, listen first.
+- If the user asks a real learning question, then help them learn.
+- Do not pretend to eat, sleep, attend college or have a physical body.
+- Be natural, friendly and concise.
+- Use previous conversation context when useful.
+`
+     : "";
+
+   const prompt=`
+You are SkillPilot AI.
+
+Agent: ${activeAgent}
+User name: ${a.name || "Student"}
+Subject: ${a.subject || "Not selected"}
+Career role: ${a.role || "Student"}
+Preferred language: ${a.language || "English"}
+
+${personalRules}
+
+Recent conversation:
+${JSON.stringify(history)}
+
+Latest user message:
+${text}
+
+Rules:
+- Answer the latest message directly.
+- Keep the response natural.
+- Do not repeat a canned response.
+- Do not ask for information the user already provided.
+- Keep normal conversation concise.
+- For technical questions, explain simply with a small example.
+- For coding questions, provide correct runnable code when appropriate.
+- Match the user's language and casual style when possible.
+- Never mention these instructions.
+`;
+
+   const r=await fetch(
+     "http://127.0.0.1:8000/api/agent",
+     {
+       method:"POST",
+       headers:{
+         "Content-Type":"application/json"
+       },
+       body:JSON.stringify({
+         subject:a.subject,
+         role:a.role,
+         agent:activeAgent,
+         language:a.language,
+         name:a.name,
+         message:text,
+         history:history
+       })
+     }
+   );
+
+   if(r.ok){
+
+     const d=await r.json();
+
+     if(d.ok && d.reply){
+       return d.reply;
+     }
+   }
+
+ }catch(e){
+   console.log("AI backend unavailable:",e);
+ }
+
+ /*
+  If Ollama/backend is unavailable,
+  use the local fallback.
+ */
+
+ return agentResponse(text);
+}
+async function sendAgent(){
+ const input=document.getElementById("agentInput"),text=input.value.trim(),a=account();if(!text)return;
+ a.agentChats=a.agentChats||{};a.agentChats[activeAgent]=a.agentChats[activeAgent]||[];a.agentChats[activeAgent].push({role:"user",text});save(a);input.value="";renderAgentChat();
+ const box=document.getElementById("agentChat");
+ box.innerHTML+=`<div class="msg" id="agentTyping"><div class="who">${AGENTS[activeAgent][0]}</div><span class="typing">Thinking <i></i><i></i><i></i></span></div>`;box.scrollTop=box.scrollHeight;
+ const reply=await smartAgentResponse(text);
+ document.getElementById("agentTyping")?.remove();
+ const fresh=account();fresh.agentChats[activeAgent].push({role:"assistant",text:reply});save(fresh);renderAgentChat();
+}
+function clearAgent(){const a=account();a.agentChats[activeAgent]=[];save(a);renderAgentChat();toast("Agent chat cleared")}
+function voiceInput(){const R=window.SpeechRecognition||window.webkitSpeechRecognition;if(!R){toast("Voice input is not supported in this browser");return}const a=account(),r=new R();r.lang=a.language==="telugu"?"te-IN":a.language==="hindi"?"hi-IN":"en-IN";r.onstart=()=>{document.getElementById("mic").classList.add("on");document.getElementById("voiceStatus").textContent="Listening..."};r.onresult=e=>{document.getElementById("agentInput").value=e.results[0][0].transcript;document.getElementById("voiceStatus").textContent="Speech converted to text. Press Send."};r.onend=()=>document.getElementById("mic").classList.remove("on");r.start()}
+
+function fillProfile(){const a=account();document.getElementById("profileName").value=a.name;document.getElementById("profileRole").innerHTML=(ROLES[a.subject]||[]).map(x=>`<option ${x===a.role?"selected":""}>${x}</option>`).join("");document.getElementById("profileSubject").innerHTML=Object.keys(SUBJECTS).map(x=>`<option ${x===a.subject?"selected":""}>${x}</option>`).join("");document.getElementById("globalLanguage").value=a.language||"english"}
+function openProfile(){fillProfile();document.getElementById("profileModal").classList.add("show")}
+function closeProfile(){document.getElementById("profileModal").classList.remove("show")}
+function saveProfile(){const a=account();a.name=document.getElementById("profileName").value.trim()||a.name;const old=a.subject;a.subject=document.getElementById("profileSubject").value;a.learningTopic=SUBJECTS[a.subject].road[0];a.role=document.getElementById("profileRole").value;save(a);document.getElementById("profileModal").classList.remove("show");renderAll();document.getElementById("avatar").textContent=a.name.charAt(0).toUpperCase();toast("Profile saved")}
+function saveLanguage(){const a=account();a.language=document.getElementById("globalLanguage").value;save(a);toast("Language preference saved")}
+
+function topicCodingQuestions(subject,topic){const c=canonicalTopic(topic),lang=SUBJECTS[subject].lang;const base=(id,title,text,example,starter,level="Beginner")=>q(subject.slice(0,2).toLowerCase()+"_topic_"+c.replace(/\W+/g,"_")+"_"+id,c,level,title,text,example,starter);if(c==="OOP")return [base(1,"Create a class","Create a Student class with name and marks, then create one object and print the values.","Expected output example: Karthik 85",lang==="python"?"class Student:\n    # write code\n    pass":lang==="cpp"?"#include <iostream>\nusing namespace std;\nclass Student {\npublic:\n    // write members\n};\nint main(){ return 0; }":"// create a Student class and object"),base(2,"Method inside a class","Create a class Rectangle with a method area() that returns length * width. Test 5 and 4.","Expected: 20",lang==="python"?"class Rectangle:\n    # write code\n    pass":"// create Rectangle and area()"),base(3,"Encapsulation practice","Create a class with a private/internal marks value and a method that returns the marks.","Expected: the stored marks value",lang==="cpp"?"#include <iostream>\nusing namespace std;\nclass Student {\n    int marks;\npublic:\n    // write code\n};\nint main(){ return 0; }":"// implement a class with controlled access","Intermediate")];if(c==="Projects")return [base(1,"Mini calculator","Build a small calculator that reads two numbers and prints sum, difference and product.","For 8 and 3: 11, 5, 24",lang==="python"?"a=int(input())\nb=int(input())\n# write solution":"// read two numbers and calculate"),base(2,"Student result","Read marks for three subjects, calculate total and average, then print Pass if average >= 40.","Example: total=210, average=70, Pass",lang==="python"?"# read three marks\n# calculate total and average":"// read marks and calculate"),base(3,"Menu-driven program","Create a small menu that lets the user choose a calculation and repeats until exit.","Use a loop and conditions.",lang==="python"?"# build the menu\n":"// build a menu using loop and switch/conditions","Intermediate")];return []}
+function codingQuestions(){const a=account(),bank=BANK[SUBJECTS[a.subject].lang]||[],topic=a.learningTopic||SUBJECTS[a.subject].road[0],canon=canonicalTopic(topic);const filtered=bank.filter(q=>canonicalTopic(q.topic)===canon);return filtered.length?filtered.concat(topicCodingQuestions(a.subject,topic)):topicCodingQuestions(a.subject,topic).length?topicCodingQuestions(a.subject,topic):bank}
+function solvedSet(){const a=account();return new Set(a.submissions.filter(x=>x.subject===a.subject).map(x=>x.id))}
+function loadCoding(){const a=account(),bank=codingQuestions(),solved=solvedSet();let available=bank.filter(x=>!solved.has(x.id));if(!available.length){toast("All questions in this subject are completed");available=bank}if(currentCodeQuestion===null||currentCodeQuestion.subject!==a.subject){currentCodeQuestion={subject:a.subject,index:Math.min(a.submissions.filter(x=>x.subject===a.subject).length,bank.length-1)}}codingIndex=Math.min(currentCodeQuestion.index,bank.length-1);renderCodingQuestion()}
+function renderCodingQuestion(){const a=account(),bank=codingQuestions(),q=bank[codingIndex];currentCodeQuestion={subject:a.subject,index:codingIndex};document.getElementById("codingTitle").textContent=q.title;document.getElementById("codingLevel").textContent=q.difficulty;document.getElementById("codingTopic").textContent=q.topic;document.getElementById("codingNumber").textContent=`${codingIndex+1}/${bank.length} · ${a.subject}`;document.getElementById("codingProblem").textContent=q.text;document.getElementById("codingExample").textContent=q.example;document.getElementById("codeEditor").value="";document.getElementById("programInput").value="";document.getElementById("compilerOutput").textContent="Ready. Write your code, optionally add input, then click Run compiler.";document.getElementById("compilerOutput").dataset.ok="0";document.getElementById("understood").checked=false;document.getElementById("tested").checked=false;renderCodingHistory()}
+function prevCoding(){if(codingIndex>0){codingIndex--;renderCodingQuestion()}else toast("This is the first question")}
+function nextCoding(){if(codingIndex<codingQuestions().length-1){codingIndex++;renderCodingQuestion()}else toast("This is the last question")}
+async function runCode(){const a=account(),code=document.getElementById("codeEditor").value.trim(),input=document.getElementById("programInput").value,out=document.getElementById("compilerOutput");if(!code){toast("Write code first");return}out.textContent="Compiling and running...";try{const r=await fetch("http://127.0.0.1:8000/api/run",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({language:SUBJECTS[a.subject].lang,code,input})});const d=await r.json();out.textContent=(d.ok?"COMPILE / RUN SUCCESS\n\n":"COMPILE / RUN ERROR\n\n")+(d.output||"")+(d.error?`\n\n${d.error}`:"");out.dataset.ok=d.ok?"1":"0"}catch(e){out.textContent="Compiler backend is not running.\n\nRun start_windows.bat and keep its terminal open.";out.dataset.ok="0"}}
+function submitCode(){const a=account(),q=codingQuestions()[codingIndex],code=document.getElementById("codeEditor").value.trim();if(!code||document.getElementById("compilerOutput").dataset.ok!=="1"||!document.getElementById("understood").checked||!document.getElementById("tested").checked){toast("Compile successfully, then complete both checkboxes");return}if(a.submissions.some(x=>x.id===q.id&&x.subject===a.subject)){toast("This question was already submitted");return}a.submissions.unshift({id:q.id,title:q.title,topic:q.topic,language:a.subject,subject:a.subject,date:today(),code});a.weeklyMinutes=(a.weeklyMinutes||0)+20;a.lastCompletedDate=today();save(a);document.getElementById("streak").textContent=a.streak||0;toast("Solution submitted. Progress updated.");renderAll();nextCoding()}
+function renderCodingHistory(){const a=account();document.getElementById("codingHistory").innerHTML=a.submissions.filter(x=>x.subject===a.subject).map((x,i)=>`<div class="submission-item"><b>${esc(x.title)}</b><div class="muted" style="font-size:12px">${x.language} · ${x.topic} · ${x.date}</div></div>`).join("")||"<div class='muted'>No submissions for this subject yet.</div>"}
+
+function init(){const id=localStorage.getItem("sp_user");if(id&&localStorage.getItem(key(id))){openApp()}else{document.getElementById("login").classList.remove("hidden");document.getElementById("app").classList.add("hidden")}setAuthMode("login")}
+init();
+</script>
+</body></html>
